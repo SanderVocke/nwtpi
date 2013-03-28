@@ -1,15 +1,12 @@
 1. OVERVIEW
 NWTPI is the Native Window Toolkit C++ API designed for the Raspberry Pi (tm).
 This API allow to access to the native Pi video board, headless, meaning without X11 or any other window manager.
-It use the Broadcom C API 'DispmanX', and put its use to the background.
+It use the Broadcom low level C API 'DispmanX', and put its use to the background.
 
 NWTPI was evolved in order to get a simple API like the one done for Java through JOGL::NEWT.
 
-2. AUTHORS
-Valéry Seys, Paris, France
-
-3. USAGE
-3.1
+2. USAGE
+2.1
 	NWTPI * drawable = new NWTPI("MyDrawable",width,height);
 	MyGlObject * Triangle = new MyGlObject(drawable);
 
@@ -17,16 +14,54 @@ Valéry Seys, Paris, France
 
 	Triangle->drawScene();											
 	
-3.2
+2.2
 	NWTPI * drawable = new NWTPI("MyDrawable",width,height);
 	MyGlObject * Triangle = new MyGlObject();
 
 	Triangle->drawScene();
 	drawable->swapBuffers();
+
+3. OS Level : 
+$ uname -a 
+	Linux raspberrypi 3.6.11+ #371 PREEMPT Thu Feb 7 16:31:35 GMT 2013 armv6l GNU/Linux
 	
+	ie Raspbian 3.6.11
+	
+!! Don't ask me anything if your RPi Linux version is not 3.6.11 or above. !!
 
+4. Dispmanx : some tips
+If you prefer to use dispmanx API, most important things are here :
+	- after a bcm_host_init() call, dispmanx sequence must be : 
+		displayOpen
+		updateStart
+		elementAdd
+		updateSync	==> validate element above.
 
- 
- 
+		.. from which you get an 'element' to pass to EGL through egCreateWindowSurface.
+		Once your EGL context is created, EGLDisplay and EGLSurface will be used to draw your scene,
+		ie swap your frame buffer.
+		
+		!! Very important point here : EGLDisplay and EGLSurface types actually are (void *) pointers ;
+		these pointers are updated, so you cannot passed them by value, do something, and then use them.
+		For example, inside your GLES2 program, you could code : 
+		object::drawScene() {
+			EGLDisplay myEgDisplay;
+			EGLSurface myEgSurface;
+			...
+			GLES2 Calls ... drawScene ...
+			...
+			eglSwapBuffers(myEgDisplay,myEgSurface);
+		}
 
+		==> !! will not work !! (void *) myEgDisplay and myEgSurface are loosed.
+		
+		The right way is to call eglSwapBuffers like this :
+			eglSwapBuffers(eglGetCurrentDisplay(), eglGetCurrentSurface());
+
+		NWTPI::swapBuffers() use ensure these pointers are good ones.
+
+	Feel free to go into NWTPI in order to understand the whole mess.
+
+5. AUTHORS
+Valéry Seys aka V/, Paris, France
  
