@@ -20,21 +20,12 @@ const GLubyte Triangle::triangleIndices[] = {0,1,2};
 const int Triangle::numVertices = 3;
 const int Triangle::numIndices  = 3;
 
-//const string Triangle::vshTriangleSource =
-//	"attribute vec3 a_vertex; \n \
-//	void main() \n \
-//	{ gl_Position = vec4(a_vertex, 1.0); }";
-//
 const char Triangle::vshTriangleSource[] = 
 	"attribute vec3 a_vertex; \n"
 	"void main() \n"
 	"{ \n"
 	" gl_Position = vec4(a_vertex, 1.0); \n"
 	"} \n";
-
-//const string Triangle::fshTriangleSource = 
-//	"void main() \n \
-//	{ gl_FragColor = vec4 (1.0, 1.0, 1.0, 1.0); }";
 
 const char Triangle::fshTriangleSource[] = 
 	"void main() \n"
@@ -47,13 +38,6 @@ Triangle::Triangle() {/*{{{*/
 	if ( createProgramAndShaders() == false)
 		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
 }/*}}}*/
-
-Triangle::Triangle(EglState* _egl) {
-	egl = _egl;
-	createBufferObjects();
-	if ( createProgramAndShaders() == false)
-		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
-}
 
 Triangle::Triangle(NWTPI* _drawable) {
 	drawable = _drawable;
@@ -113,23 +97,13 @@ bool Triangle::createProgramAndShaders()/*{{{*/
 
 	programId = newProgram(vshId, fshId);
 
-	// Clears the shaders objects.
-	// In this case we can delete the shaders because we'll not use they anymore,
-	// the OpenGL stores a copy of them into the program object.
 	glDeleteShader(vshId);
 	glDeleteShader(fshId);
-
-	// Gets the uniforms locations
-	//uniforms[U_MVPMATRIX] = gl.glGetUniformLocation(programId, "u_mvpMatrix");
-	//uniforms[1] = gl.glGetUniformLocation(programId, "u_map");
 
 	// Gets the attributes locations.
 	attributes[A_VERTEX] = glGetAttribLocation(programId, "a_vertex");
 	//attributes[1] = gl.glGetAttribLocation(programId, "a_texCoord");
 
-	// As we'll use only those pair of shaders, let's enable the dynamic attributes to they once.
-	//gl.glEnableVertexAttribArray(attributes[0]);
-	//gl.glEnableVertexAttribArray(attributes[1]);
 
 	return (programId == 0 ? false : true );
 }/*}}}*/

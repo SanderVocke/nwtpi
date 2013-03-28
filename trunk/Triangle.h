@@ -14,10 +14,8 @@ using namespace std;
 
 class Triangle {
 	private:
-   		//EGLContext 	context;
-		//GLDrawable drawable;
+
 		NWTPI *drawable;
-		EglState *egl;
 	
 		int width;
 		int height;
@@ -57,7 +55,6 @@ class Triangle {
 
 	public:
 		Triangle();
-		Triangle(EglState *);
 		Triangle(NWTPI *);
 		~Triangle();
 		void 	drawScene();
