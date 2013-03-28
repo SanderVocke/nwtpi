@@ -38,69 +38,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "EGL/eglext.h"
 
 #include "nwtpi.h"
-#include "misc.h"
 #include "Triangle.h"
 
 using namespace std;
 
-static EglState _egls, *egls=&_egls;
 
 static volatile int terminate;
-
-//static void 		drawScene(EglState *);
-//static void			clearBackground(float);
-
-//static void drawScene(EglState *egl)/*{{{*/
-//{
-//   // Start with a clear screen
-//   glClear( GL_COLOR_BUFFER_BIT );
-//   glMatrixMode(GL_MODELVIEW);
-//
-//   glEnable(GL_TEXTURE_2D);
-//   glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-//
-//   // Draw first (front) face:
-//   // Bind texture surface to current vertices
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[0]);
-//
-//   // Need to rotate textures - do this by rotating each cube face
-//   glRotatef(270.f, 0.f, 0.f, 1.f ); // front face normal along z axis
-//
-//   // draw first 4 vertices
-//   glDrawArrays( GL_TRIANGLE_STRIP, 0, 4);
-//
-//   // same pattern for other 5 faces - rotation chosen to make image orientation 'nice'
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[1]);
-//   glRotatef(90.f, 0.f, 0.f, 1.f ); // back face normal along z axis
-//   glDrawArrays( GL_TRIANGLE_STRIP, 4, 4);
-//
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[2]);
-//   glRotatef(90.f, 1.f, 0.f, 0.f ); // left face normal along x axis
-//   glDrawArrays( GL_TRIANGLE_STRIP, 8, 4);
-//
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[3]);
-//   glRotatef(90.f, 1.f, 0.f, 0.f ); // right face normal along x axis
-//   glDrawArrays( GL_TRIANGLE_STRIP, 12, 4);
-//
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[4]);
-//   glRotatef(270.f, 0.f, 1.f, 0.f ); // top face normal along y axis
-//   glDrawArrays( GL_TRIANGLE_STRIP, 16, 4);
-//
-//   glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-//
-//   glBindTexture(GL_TEXTURE_2D, dispman->tex[5]);
-//   glRotatef(90.f, 0.f, 1.f, 0.f ); // bottom face normal along y axis
-//   glDrawArrays( GL_TRIANGLE_STRIP, 20, 4);
-//
-//   glDisable(GL_TEXTURE_2D);
-//
-//   eglSwapBuffers(egl->display, egl->surface);
-//}/*}}}*/
-
-//static void clearBackground(float blueColor) {/*{{{*/
-//	glClearColor(0.2f, 0.3f, blueColor, 0.9f);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//}/*}}}*/
 
 
 int main(int argc,char* argv[])
@@ -113,21 +56,11 @@ int main(int argc,char* argv[])
 	
 	try
 	{
-//		cout << "==> bcm init : ";
-//		bcm_host_init();
-//		cout << "done." << endl;
-//		memset( egls, 0, sizeof( *egls ) );
-//
-//		// Get Display, Context, Surface, W, H and make context current
-//		cout << "==> egl init : " << endl;
-//		eglInit(egls);
-//		cout << "==> done." << endl;
 
 		cout << "==> Create NWTPI drawable" << endl;
 		NWTPI *  drawable = new NWTPI("Triangle",1920,1080);
 
 		cout << "==> Triangle init : " << endl;
-//		Triangle* triangle = new Triangle(egls);
 		Triangle* triangle = new Triangle(drawable);
 		cout << "==> done." << endl;
 
@@ -140,7 +73,7 @@ int main(int argc,char* argv[])
 
 			triangle->drawScene();
 
-			//eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
+			//drawable->swapBuffers();
 
 			totaltime += deltatime;
 			frames++;
@@ -151,17 +84,7 @@ int main(int argc,char* argv[])
 				frames = 0;
 			}
     	}
-
-		// Setup the model world
-		//   init_model_proj(elgs);
-		// initialise the GLES texture(s)
-		//   init_textures(egls);
-
-		//usleep(5*1000);
-		//updateModel(egls);
-		//drawScene(egls);
 		
-		eglExit(egls);
 		return 0;
 	}
 	catch(exception& e) 								//std::runtime_error err)
@@ -173,5 +96,3 @@ int main(int argc,char* argv[])
 		return 1;
 	}
 }
-
-// vi: set foldmethod=marker:
