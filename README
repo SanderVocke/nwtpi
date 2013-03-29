@@ -58,7 +58,7 @@ If you prefer to use dispmanx API, most important things are here :
 		The right way is to call eglSwapBuffers like this :
 			eglSwapBuffers(eglGetCurrentDisplay(), eglGetCurrentSurface());
 
-		NWTPI::swapBuffers() use ensure these pointers are good ones.
+		NWTPI::swapBuffers() ensure these pointers are good ones.
 
 	Feel free to go into NWTPI in order to understand the whole mess.
 
