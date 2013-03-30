@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+
 #include "nwtpi.h"
 
 // Static data initialization
@@ -14,7 +15,9 @@ DISPMANX_ELEMENT_HANDLE_T	NWTPI::dmElement = (unsigned int) 0;
 EGL_DISPMANX_WINDOW_T		NWTPI::dmWindow = {};
 
 
-NWTPI::NWTPI(char* title, unsigned int winWidth, unsigned int winHeight) {
+NWTPI::NWTPI(string title, unsigned int w, unsigned int h)
+	: windowTitle(title), windowWidth(w), windowHeight(h)
+	{
 	int cr = 0;
 
 	if ( bcInitiated == false ) {
@@ -29,21 +32,21 @@ NWTPI::NWTPI(char* title, unsigned int winWidth, unsigned int winHeight) {
 
 		DEBUG ( "NWTPI", "graphicsGetDisplaySize done : " << bcDeviceWidth << "," << bcDeviceHeight );
 
-		if ( ( winWidth > bcDeviceWidth ) || ( winHeight > bcDeviceHeight ) )
+		if ( ( windowWidth > bcDeviceWidth ) || ( windowHeight > bcDeviceHeight ) )
 			throw runtime_error("runtime error : NWTPI::NWTPI ** window sizes exceed device capabilities.");
 
 
 		dmDisplay = dmDisplayOpen( LCD );											// set dmDisplay
 		dmUpdate  = dmUpdateStart(0);												// dmUpdate
-		dmElement = dmElementAdd(dmUpdate, dmDisplay, winWidth, winHeight);			// dmElement will fill the entire window
+		dmElement = dmElementAdd(dmUpdate, dmDisplay, windowWidth, windowHeight);	// dmElement will fill the entire window
 
 		DEBUG ( "NWTPI", " display : " << hex << dmDisplay << ", upd : " << hex << dmUpdate << ", elm : " << hex << dmElement << dec );
 
 		dmUpdateSync(dmUpdate);														// validate our element we have just created.
 
 		dmWindow.element = dmElement;
-		dmWindow.width = winWidth;
-		dmWindow.height = winHeight;
+		dmWindow.width = windowWidth;
+		dmWindow.height = windowHeight;
 
 		if ( ( cr = egCreateContext() ) < 0 ) {													// create eglDisplay,Context,Surface from dmWindow.element+w+h
 			DEBUG ( "NWTPI", "[" << dec << cr << "]" );
@@ -189,8 +192,28 @@ int NWTPI::egCreateContext() {
 	return 1;
 }
 
+unsigned int NWTPI::getWindowWidth() {
+	return windowWidth;
+}
+
+unsigned int NWTPI::getWindowHeight() {
+	return windowHeight;
+}
+
+string NWTPI::getWindowTitle() {
+	return windowTitle;
+}
+
 void NWTPI::swapBuffers() {
 	eglSwapBuffers(egDisplay, egSurface);
+}
+
+EGLDisplay NWTPI::getCurrentDisplay() {
+	return egDisplay;
+}
+
+EGLSurface NWTPI::getCurrentSurface() {
+	return egSurface;
 }
 
 #ifdef DEBUG_ON

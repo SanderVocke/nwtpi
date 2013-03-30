@@ -190,19 +190,14 @@ void Triangle::drawScene ()
 	//cout << "done." << endl;
 
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_BYTE, (void *) 0);
-	checkGLError("glDrawElements");
 	//glDrawArrays( GL_TRIANGLES, 0, 3);
+	checkGLError("glDrawElements");
 
 	glFlush();
 
-//	currentDisplay = drawable->egDisplay;
-//	currentSurface = drawable->egSurface;
-//	currentDisplay = egl->display;
-//	currentSurface = egl->surface;
-
-	drawable->swapBuffers();															// if you don't know how it really works, don't call eglSwapBuffers, but NWTPI::swapBuffers instead.
-	//eglSwapBuffers(egl->display, egl->surface);
-
+	//drawable->swapBuffers();															// TEST OK
+	//eglSwapBuffers(drawable->egDisplay, drawable->egSurface);							// TEST OK
+	//eglSwapBuffers(drawable->getCurrentDisplay(), drawable->getCurrentSurface());		// TEST OK
 
 	glDisableVertexAttribArray(attributes[A_VERTEX]);									// Disable our Pointer
 	//cout << "==> drawScene : unbinding objects : ";
