@@ -7,7 +7,7 @@ OBJDIR=obj
 OBJS=$(patsubst %.cpp, $(OBJDIR)/%.o, $(SOURCES))
 
 GPP=g++
-CFLAGS+=-Wall -g
+CFLAGS+=-Wall -g -DDEBUG_ON
 LDFLAGS+=-L/opt/vc/lib -lbcm_host -lGLESv2 -lEGL 
 INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I./
 

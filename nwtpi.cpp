@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 #include "nwtpi.h"
 
@@ -21,12 +22,12 @@ NWTPI::NWTPI(char* title, unsigned int winWidth, unsigned int winHeight) {
 		bcm_host_init();
 		bcInitiated=true;
 
-		cout << "NWTPI ==> bcmHostInit done." << endl;
+		DEBUG ( "NWTPI", "bcmHostInit done." );
 
 		if ( graphics_get_display_size( LCD, &bcDeviceWidth, &bcDeviceHeight) < 0)
 			throw runtime_error("runtime error : NWTPI::NWTPI ** cannot get graphic_display_size.");
 
-		cout << "NWTPI ==> graphicsGetDisplaySize done : " << bcDeviceWidth << "," << bcDeviceHeight << endl;
+		DEBUG ( "NWTPI", "graphicsGetDisplaySize done : " << bcDeviceWidth << "," << bcDeviceHeight );
 
 		if ( ( winWidth > bcDeviceWidth ) || ( winHeight > bcDeviceHeight ) )
 			throw runtime_error("runtime error : NWTPI::NWTPI ** window sizes exceed device capabilities.");
@@ -35,10 +36,9 @@ NWTPI::NWTPI(char* title, unsigned int winWidth, unsigned int winHeight) {
 		dmDisplay = dmDisplayOpen( LCD );											// set dmDisplay
 		dmUpdate  = dmUpdateStart(0);												// dmUpdate
 		dmElement = dmElementAdd(dmUpdate, dmDisplay, winWidth, winHeight);			// dmElement will fill the entire window
-		cout << "==> NWTPI:NWTPI : display : " << hex << dmDisplay
-								 << ", upd : " << hex << dmUpdate
-								 << ", elm : " << hex << dmElement
-								 << endl;
+
+		DEBUG ( "NWTPI", " display : " << hex << dmDisplay << ", upd : " << hex << dmUpdate << ", elm : " << hex << dmElement << dec );
+
 		dmUpdateSync(dmUpdate);														// validate our element we have just created.
 
 		dmWindow.element = dmElement;
@@ -46,10 +46,11 @@ NWTPI::NWTPI(char* title, unsigned int winWidth, unsigned int winHeight) {
 		dmWindow.height = winHeight;
 
 		if ( ( cr = egCreateContext() ) < 0 ) {													// create eglDisplay,Context,Surface from dmWindow.element+w+h
-			cout << "[" << dec << cr << "]" << endl;
+			DEBUG ( "NWTPI", "[" << dec << cr << "]" );
 			throw runtime_error("runtime error : NWTPI::NWTPI.egCreateContext ** failed : ");
 		}
-		cout << "NWTPI ==> egCreateContext done." << endl;
+
+		DEBUG ("NWTPI" , "egCreateContext done." );
 
 	} else
 		throw runtime_error("runtime error : NWTPI::NWTPI ** bcm host already initiated.");
@@ -191,3 +192,10 @@ int NWTPI::egCreateContext() {
 void NWTPI::swapBuffers() {
 	eglSwapBuffers(egDisplay, egSurface);
 }
+
+#ifdef DEBUG_ON
+void NWTPI::logd(string method, ostream& message) {
+	ostringstream& s = dynamic_cast<ostringstream&>(message);
+	cout << "==> " << method << " : " << s.str() << endl;
+}
+#endif

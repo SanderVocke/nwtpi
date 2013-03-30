@@ -12,6 +12,12 @@
 
 using namespace std;
 
+#ifdef DEBUG_ON
+    #define DEBUG( a, b ) logd(a, ostringstream().flush() << b )
+#else
+    #define DEBUG( a, b )
+#endif
+
 class Triangle {
 	private:
 
@@ -59,7 +65,11 @@ class Triangle {
 		~Triangle();
 		void 	drawScene();
 		void 	clearBackground(float blueColor);
-		
+
+#ifdef DEBUG_ON
+		void logd(string , ostream& );
+#endif
+
 };
 
 #endif
