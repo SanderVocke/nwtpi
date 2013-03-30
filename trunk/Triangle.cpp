@@ -33,11 +33,11 @@ const char Triangle::fshTriangleSource[] =
 	"}\n";
 
 
-Triangle::Triangle() {/*{{{*/
+Triangle::Triangle() {
 	createBufferObjects();
 	if ( createProgramAndShaders() == false)
 		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
-}/*}}}*/
+}
 
 Triangle::Triangle(NWTPI* _drawable) {
 	drawable = _drawable;
@@ -45,16 +45,16 @@ Triangle::Triangle(NWTPI* _drawable) {
 	if ( createProgramAndShaders() == false)
 		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
 }
-Triangle::~Triangle() {/*{{{*/
-}/*}}}*/
+Triangle::~Triangle() {
+}
 
 void Triangle::createBufferObjects() {/*{{{*/
 		
 	vboIds = newBufferObject(triangleVertices, triangleIndices);
 
-}/*}}}*/
+}
 	
-GLuint* Triangle::newBufferObject(const GLfloat* verticesArray, const GLubyte* indicesArray) /*{{{*/
+GLuint* Triangle::newBufferObject(const GLfloat* verticesArray, const GLubyte* indicesArray)
 {
 
 	static GLuint tempIds[] = {0, 0};								// store temporary id's, glgenBuffers require an array
@@ -81,9 +81,9 @@ GLuint* Triangle::newBufferObject(const GLfloat* verticesArray, const GLubyte* i
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	return tempIds;
-} /*}}}*/
+}
 
-bool Triangle::createProgramAndShaders()/*{{{*/
+bool Triangle::createProgramAndShaders()
 {
 	GLuint vshId=-1, fshId=-1;
 
@@ -106,9 +106,9 @@ bool Triangle::createProgramAndShaders()/*{{{*/
 
 
 	return (programId == 0 ? false : true );
-}/*}}}*/
+}
 
-GLuint Triangle::newProgram(GLuint vertexShader, GLuint fragmentShader)/*{{{*/
+GLuint Triangle::newProgram(GLuint vertexShader, GLuint fragmentShader)
 {
 	GLuint id;
 	GLint linkStatus;
@@ -139,9 +139,9 @@ GLuint Triangle::newProgram(GLuint vertexShader, GLuint fragmentShader)/*{{{*/
 		cout << "==> newProgram linked : " << id << "\n";
 	
 	return id;
-}/*}}}*/
+}
 
-GLuint Triangle::newShader(GLenum type, const char * source)/*{{{*/
+GLuint Triangle::newShader(GLenum type, const char * source)
 {
 	GLuint id;
 
@@ -170,7 +170,7 @@ GLuint Triangle::newShader(GLenum type, const char * source)/*{{{*/
 		cout << "==> newShader created : " << id << "\n";
 
 	return id;
-}/*}}}*/
+}
 
 void Triangle::drawScene () 
 {
@@ -211,13 +211,13 @@ void Triangle::drawScene ()
 	//cout << "done." << endl;
 }
 
-void Triangle::clearBackground (float blueColor) /*{{{*/
+void Triangle::clearBackground (float blueColor)
 {
 	glClearColor(0.2f, 0.3f, blueColor, 0.9f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}/*}}}*/
+}
 
-void Triangle::checkProgramLogInfo(GLuint programId) /*{{{*/
+void Triangle::checkProgramLogInfo(GLuint programId)
 {
 	GLsizei infoLength;
 
@@ -230,9 +230,9 @@ void Triangle::checkProgramLogInfo(GLuint programId) /*{{{*/
 		cout << "==> Program linking result : \n>>\n" << infoLogBuffer << "\n<<\n";
 		delete[] infoLogBuffer;
 	}
-}/*}}}*/
+}
 
-void Triangle::checkShaderLogInfo(GLuint shaderId) {/*{{{*/
+void Triangle::checkShaderLogInfo(GLuint shaderId) {
 
 	GLsizei infoLength;
 
@@ -244,9 +244,9 @@ void Triangle::checkShaderLogInfo(GLuint shaderId) {/*{{{*/
 		cout << "==> Shader compilation result : \n>>\n" << infoLogBuffer << "\n<<\n";
 		delete[] infoLogBuffer;
 	}
-}/*}}}*/
+}
 	
-void Triangle::checkGLError(string sFuncName ) /*{{{*/
+void Triangle::checkGLError(string sFuncName )
 {
 	static const string errorString[] = {"INVALID_ENUM","INVALID_VALUE","INVALID_OPERATION","INVALID_FRAMEBUFFER_OPERATION","OUT_OF_MEMORY","Unknown Gl Error"};
 	int glError;
@@ -272,7 +272,7 @@ void Triangle::checkGLError(string sFuncName ) /*{{{*/
 
             }
         } while( glError != GL_NO_ERROR );
-}/*}}}*/
+}
 
 bool Triangle::isVBOBinded(GLenum type, int vboId) {/*{{{*/
 	GLint p;
@@ -281,12 +281,17 @@ bool Triangle::isVBOBinded(GLenum type, int vboId) {/*{{{*/
 		return false;
 
 	return true;
-}/*}}}*/
+}
 
 void Triangle::checkVBOBinding(GLenum type, int vboId) {/*{{{*/
 	if ( (isVBOBinded(type, vboId)) == false )
 		throw runtime_error("runtime error : Triangle::checkVBOBinding ** VBO not bound");
 		//throw Exception("==> VBO not bound");
-}/*}}}*/
+}
 
-// vim:set foldmethod=marker: //
+#ifdef DEBUG_ON
+void Triangle::logd(string method, ostream& message) {
+	ostringstream& s = dynamic_cast<ostringstream&>(message);
+	cout << "==> " << method << " : " << s.str() << endl;
+}
+#endif

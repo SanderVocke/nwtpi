@@ -1,12 +1,20 @@
 #ifndef _NWTPI_H
 #define _NWTPI_H
 
+#include <iostream>
+#include <sstream>
+
 #include "bcm_host.h"
 
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 #include "GLES2/gl2.h"
 
+#ifdef DEBUG_ON
+    #define DEBUG( a, b ) logd(a, ostringstream().flush() << b )
+#else
+    #define DEBUG( a, b )
+#endif
 
 using namespace std;
 
@@ -44,6 +52,10 @@ private:
 	// EGL Stuff
 	//
 	enum ES_WINDOW_BUFFER_TYPE : unsigned int { RGB=0, ALPHA=1, DEPTH=2, STENCIL=4, MULTISAMPLE=8 };
+
+#ifdef DEBUG_ON
+	void logd(string , ostream& );
+#endif
 
 private:
 	EGLDisplay	egDisplay;

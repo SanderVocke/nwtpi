@@ -1,5 +1,5 @@
 /* {{{1
-Copyright (c) 2012, vslash.com
+Copyright (c) 2013, vslash.com
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -42,8 +42,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using namespace std;
 
+#ifdef DEBUG_ON
+#define DEBUG( a, b ) logdebug(a, ostringstream().flush() << b )
 
-static volatile int terminate;
+void logdebug(string method, ostream& message) {
+	ostringstream& s = dynamic_cast<ostringstream&>(message);
+	cout << "==> " << method << " : " << s.str() << endl;
+}
+
+#else
+    #define DEBUG( a, b )
+#endif
 
 
 int main(int argc,char* argv[])
@@ -56,13 +65,13 @@ int main(int argc,char* argv[])
 	
 	try
 	{
+		DEBUG ("main()", "Create NWTPI drawable" );
 
-		cout << "==> Create NWTPI drawable" << endl;
-		NWTPI *  drawable = new NWTPI("Triangle",1920,1080);
+		NWTPI *  drawable = new NWTPI("Triangle",720,480);
 
-		cout << "==> Triangle init : " << endl;
+		DEBUG ("main()", "Create Triangle" );
+
 		Triangle* triangle = new Triangle(drawable);
-		cout << "==> done." << endl;
 
 		gettimeofday ( &t1 , &tz );
 		while ( true ) 
@@ -87,12 +96,9 @@ int main(int argc,char* argv[])
 		
 		return 0;
 	}
-	catch(exception& e) 								//std::runtime_error err)
+	catch(exception& e) 													// std::runtime_error err)
 	{
-		/* Print error message: */
 		cerr << "\n\n Exception trap : " << e.what() << "\n\n" << endl;
-
-		/* Signal error to OS: */
 		return 1;
 	}
 }
