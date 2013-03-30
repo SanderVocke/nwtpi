@@ -25,8 +25,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  }}} */
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <cstdio>
+#include <cstdarg>
 #include <sys/time.h>
 
 #include <iostream>
@@ -65,11 +65,11 @@ int main(int argc,char* argv[])
 	
 	try
 	{
-		DEBUG ("main()", "Create NWTPI drawable" );
+		DEBUG ( "main()", "Create NWTPI drawable" );
 
 		NWTPI *  drawable = new NWTPI("Triangle",720,480);
 
-		DEBUG ("main()", "Create Triangle" );
+		DEBUG ( "main()", "Create Triangle" );
 
 		Triangle* triangle = new Triangle(drawable);
 
@@ -82,7 +82,7 @@ int main(int argc,char* argv[])
 
 			triangle->drawScene();
 
-			//drawable->swapBuffers();
+			drawable->swapBuffers();
 
 			totaltime += deltatime;
 			frames++;

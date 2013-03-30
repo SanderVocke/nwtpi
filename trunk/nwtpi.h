@@ -32,7 +32,7 @@ private:
 	//
 	// Native Display Manager (DISPMANX)
 	//
-	enum DM_DEVICE : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV };						// bcm devices number (vc_dispmanx_type.h)
+	enum DM_DEVICE : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV };		// bcm devices number (vc_dispmanx_type.h)
 	static bool 						dmDisplayOpened;
 	static DISPMANX_DISPLAY_HANDLE_T	dmDisplay;
 	static DISPMANX_UPDATE_HANDLE_T		dmUpdate;
@@ -58,29 +58,33 @@ private:
 #endif
 
 private:
-	EGLDisplay	egDisplay;
-	EGLConfig 	egConfig;
-	EGLSurface	egSurface;
-	EGLContext	egContext;
+	string 			windowTitle;
+	unsigned int	windowWidth;
+	unsigned int 	windowHeight;
+
+	EGLDisplay		egDisplay;
+	EGLConfig 		egConfig;
+	EGLSurface		egSurface;
+	EGLContext		egContext;
 	//EGLClientBuffer 	clientBuffer;	TODO
 
-	int 		egCreateContext();
+	int 			egCreateContext();
 	//bool  		egCreateSurface();	TODO
 	//bool  		egCreateWindow();	TODO
 	//bool  		egCreateConfig();	TODO
 
 public:
-	int		windowWidth;
-	int 	windowHeight;
-	char* 	windowTitle;
-
-	NWTPI (char *, unsigned int, unsigned int);
+	NWTPI (string, unsigned int, unsigned int);
 	~NWTPI ();
 
-//	EGLDisplay*	getDisplay();			TODO
-//	EGLSurface*	getSurface();			TODO
-//	EGLContext*	getContext();			TODO
-	void 		swapBuffers();
+	string		 	getWindowTitle();
+	unsigned int 	getWindowWidth();
+	unsigned int 	getWindowHeight();
+
+	EGLDisplay		getCurrentDisplay();
+	EGLSurface		getCurrentSurface();
+//	EGLContext*		getCurrentContext();			TODO
+	void 			swapBuffers();
 
 	//EGLSurface 		getSurface();
 
