@@ -67,7 +67,7 @@ int main(int argc,char* argv[])
 	{
 		DEBUG ( "main()", "Create NWTPI drawable" );
 
-		NWTPI *  drawable = new NWTPI("Triangle",720,480);
+		NWTPI *  drawable = new NWTPI("Triangle",720,480, true);
 
 		DEBUG ( "main()", "Create Triangle" );
 

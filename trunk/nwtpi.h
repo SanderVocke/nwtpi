@@ -34,6 +34,7 @@ private:
 	//
 	enum DM_DEVICE : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV };		// bcm devices number (vc_dispmanx_type.h)
 	static bool 						dmDisplayOpened;
+	static bool							dmOpacified;
 	static DISPMANX_DISPLAY_HANDLE_T	dmDisplay;
 	static DISPMANX_UPDATE_HANDLE_T		dmUpdate;
 	static DISPMANX_ELEMENT_HANDLE_T 	dmElement;						// ->  dmWindow.element
@@ -74,7 +75,8 @@ private:
 	//bool  		egCreateConfig();	TODO
 
 public:
-	NWTPI (string, unsigned int, unsigned int);
+	// NWTPI (string, unsigned int, unsigned int);	XXX waiting for gcc4.7 ( http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1986.pdf )
+	NWTPI (string, unsigned int, unsigned int, bool);
 	~NWTPI ();
 
 	string		 	getWindowTitle();

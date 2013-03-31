@@ -7,6 +7,7 @@
 // Static data initialization
 bool 						NWTPI::bcInitiated = false;
 bool 						NWTPI::dmDisplayOpened = false;
+bool 						NWTPI::dmOpacified = true;
 unsigned int 				NWTPI::bcDeviceWidth = 0;
 unsigned int 				NWTPI::bcDeviceHeight = 0;
 DISPMANX_DISPLAY_HANDLE_T 	NWTPI::dmDisplay = (unsigned int) 0;
@@ -15,12 +16,16 @@ DISPMANX_ELEMENT_HANDLE_T	NWTPI::dmElement = (unsigned int) 0;
 EGL_DISPMANX_WINDOW_T		NWTPI::dmWindow = {};
 
 
-NWTPI::NWTPI(string title, unsigned int w, unsigned int h)
+//NWTPI::NWTPI (string title, unsigned int w, unsigned int h) : NWTPI (title, w, h, true) { } // XXX DELEGATED Constructor not supported on gcc 4.6
+
+NWTPI::NWTPI(string title, unsigned int w, unsigned int h, bool opac)
 	: windowTitle(title), windowWidth(w), windowHeight(h)
-	{
+{
 	int cr = 0;
 
 	if ( bcInitiated == false ) {
+
+		dmOpacified = opac;
 
 		bcm_host_init();
 		bcInitiated=true;
@@ -111,8 +116,9 @@ DISPMANX_ELEMENT_HANDLE_T NWTPI::dmElementAdd(	DISPMANX_UPDATE_HANDLE_T upd,
 												DISPMANX_DISPLAY_HANDLE_T disp,
 												unsigned int w, unsigned int h)
 {
-	VC_RECT_T dmDstRect;
-	VC_RECT_T dmSrcRect;
+	VC_RECT_T 			dmDstRect;
+	VC_RECT_T 			dmSrcRect;
+	VC_DISPMANX_ALPHA_T dmAlpha;
 
 	dmDstRect.x = 0;
 	dmDstRect.y = 0;
@@ -124,6 +130,22 @@ DISPMANX_ELEMENT_HANDLE_T NWTPI::dmElementAdd(	DISPMANX_UPDATE_HANDLE_T upd,
 	dmSrcRect.width = w << 16;
 	dmSrcRect.height = h << 16;
 
+
+	memset(&dmAlpha, 0x0, sizeof(VC_DISPMANX_ALPHA_T));
+
+	// whole window opacity is set as On or Off ;
+	// when off, background or objects alpha value will be set later by GL
+	//
+	if (dmOpacified == true) {
+		dmAlpha.flags = DISPMANX_FLAGS_ALPHA_FIXED_ALL_PIXELS;
+		dmAlpha.opacity = 0xFF;
+		dmAlpha.mask = 0;
+	} else {
+		dmAlpha.flags = DISPMANX_FLAGS_ALPHA_FROM_SOURCE;
+		dmAlpha.opacity = 0xFF;
+		dmAlpha.mask = 0xFF;
+	}
+
 	return vc_dispmanx_element_add (upd,
 									disp,
 									0,							/* layer						*/
@@ -131,7 +153,7 @@ DISPMANX_ELEMENT_HANDLE_T NWTPI::dmElementAdd(	DISPMANX_UPDATE_HANDLE_T upd,
 									0,							/* src							*/
 									&dmSrcRect,
 									DISPMANX_PROTECTION_NONE,	/* DISPMANX_PROTECTION define   TODO */
-									0, 							/* VC_DISPMANX_ALPHA_T alpha 	TODO */
+									&dmAlpha, 					/* VC_DISPMANX_ALPHA_T alpha 	     */
 									0,							/* DISPMANX_CLAMP_T 			TODO */
 									DISPMANX_NO_ROTATE);		/* enum DISPMANX_TRANSFORM_T 	TODO */
 }
