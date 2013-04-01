@@ -1,4 +1,4 @@
-PGM=testtriangle
+PGM=testtriangle.elf
 
 
 SOURCES= $(wildcard *.cpp)
@@ -7,7 +7,7 @@ OBJDIR=obj
 OBJS=$(patsubst %.cpp, $(OBJDIR)/%.o, $(SOURCES))
 
 GPP=g++
-CFLAGS+=-std=c++0x -Wall -g -DDEBUG_ON
+CFLAGS+=-std=c++0x -Wall -ggdb -DDEBUG_ON
 LDFLAGS+=-L/opt/vc/lib -lbcm_host -lGLESv2 -lEGL 
 INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I./
 
