@@ -69,7 +69,7 @@ private:
 	EGLContext		egContext;
 	//EGLClientBuffer 	clientBuffer;	TODO
 
-	int 			egCreateContext();
+	EGLContext		egCreateContext();
 	//bool  		egCreateSurface();	TODO
 	//bool  		egCreateWindow();	TODO
 	//bool  		egCreateConfig();	TODO

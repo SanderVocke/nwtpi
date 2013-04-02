@@ -21,7 +21,6 @@ EGL_DISPMANX_WINDOW_T		NWTPI::dmWindow = {};
 NWTPI::NWTPI(string title, unsigned int w, unsigned int h, bool opac)
 	: windowTitle(title), windowWidth(w), windowHeight(h)
 {
-	int cr = 0;
 
 	if ( bcInitiated == false ) {
 
@@ -53,12 +52,13 @@ NWTPI::NWTPI(string title, unsigned int w, unsigned int h, bool opac)
 		dmWindow.width = windowWidth;
 		dmWindow.height = windowHeight;
 
-		if ( ( cr = egCreateContext() ) < 0 ) {													// create eglDisplay,Context,Surface from dmWindow.element+w+h
-			DEBUG ( "NWTPI", "[" << dec << cr << "]" );
-			throw runtime_error("runtime error : NWTPI::NWTPI.egCreateContext ** failed : ");
-		}
+		if ( ( egContext = egCreateContext() ) == EGL_NO_CONTEXT )					// create eglDisplay,Context,Surface from dmWindow.element+w+h
+			throw runtime_error("runtime error : NWTPI::NWTPI egCreateContext ** failed");
 
-		DEBUG ("NWTPI" , "egCreateContext done." );
+		if ( eglMakeCurrent(egDisplay, egSurface, egSurface, egContext) == EGL_FALSE )
+				throw runtime_error("runtime error : NWTPI::egCreateContext ** eglMakeCurrent context failed.");
+
+		DEBUG ("NWTPI" , "egCreateContext and make current done." );
 
 	} else
 		throw runtime_error("runtime error : NWTPI::NWTPI ** bcm host already initiated.");
@@ -146,16 +146,16 @@ DISPMANX_ELEMENT_HANDLE_T NWTPI::dmElementAdd(	DISPMANX_UPDATE_HANDLE_T upd,
 		dmAlpha.mask = 0xFF;
 	}
 
-	return vc_dispmanx_element_add (upd,
-									disp,
-									0,							/* layer						*/
-									&dmDstRect,
+	return vc_dispmanx_element_add (upd,						/* update 						*/
+									disp,						/* display 						*/
+									0,							/* int32_t layer				*/
+									&dmDstRect,					/* dest_rect 					*/
 									0,							/* src							*/
-									&dmSrcRect,
-									DISPMANX_PROTECTION_NONE,	/* DISPMANX_PROTECTION define   TODO */
-									&dmAlpha, 					/* VC_DISPMANX_ALPHA_T alpha 	     */
-									0,							/* DISPMANX_CLAMP_T 			TODO */
-									DISPMANX_NO_ROTATE);		/* enum DISPMANX_TRANSFORM_T 	TODO */
+									&dmSrcRect,					/* src_rect 					*/
+									DISPMANX_PROTECTION_NONE,	/* DISPMANX_PROTECTION 		TODO */
+									&dmAlpha, 					/* VC_DISPMANX_ALPHA_T alpha     */
+									0,							/* DISPMANX_CLAMP_T 		TODO */
+									DISPMANX_NO_ROTATE);		/* DISPMANX_TRANSFORM_T 	TODO */
 }
 
 int NWTPI::dmUpdateSync(DISPMANX_UPDATE_HANDLE_T upd)
@@ -163,8 +163,7 @@ int NWTPI::dmUpdateSync(DISPMANX_UPDATE_HANDLE_T upd)
 	return vc_dispmanx_update_submit_sync(upd);
 }
 
-int NWTPI::egCreateContext() {
-
+EGLContext NWTPI::egCreateContext() {
 	EGLint 		egMajorVersion;
 	EGLint 		egMinorVersion;
 	EGLint 		egNumConfigs;
@@ -186,32 +185,25 @@ int NWTPI::egCreateContext() {
 	// Pi context => GLES/2 :                 v               v
 	EGLint egContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
 
-	//if ( ( egDisplay = eglGetDisplay((EGLNativeDisplayType) NULL) ) == EGL_NO_DISPLAY )
 	if ( ( egDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY) ) == EGL_NO_DISPLAY )
-		return -1;
+		throw runtime_error("runtime error : NWTPI::egCreateContext ** EGL_NO_DISPLAY");
 
 	if ( ! eglInitialize(egDisplay, &egMajorVersion, &egMinorVersion) )
-		return -2;
+		throw runtime_error("runtime error : NWTPI::egCreateContext ** eglInitialize failed.");
 
 //	if ( ! eglGetConfigs(egDisplay, NULL, 0, &egNumConfigs) ) TODO
 //		return -3;
 
 	if ( eglChooseConfig(egDisplay, egAttribList, &egConfig, 1, &egNumConfigs) == EGL_FALSE )
-		return -4;
+		throw runtime_error("runtime error : NWTPI::egCreateContext ** eglChooseConfig failed.");
 
-	// TODO eglCreateWindowSurface (,,, attribList [EGL RENDER BUFFER, EGL VG COLORSPACE, and EGL VG ALPHA FORMAT.] ==> pp 26
+	// TODO eglCreateWindowSurface (,,, attribList [EGL RENDER BUFFER, EGL VG COLORSPACE, and EGL VG ALPHA FORMAT.] ==> Khronos eglspecs-1.4 pp 26
 	egSurface = eglCreateWindowSurface(egDisplay, egConfig, nativeWindow, NULL );
 	if ( egSurface == EGL_NO_SURFACE )
-		return -5;
+		throw runtime_error("runtime error : NWTPI::egCreateContext ** EGL_NO_SURFACE");
 
-	egContext = eglCreateContext(egDisplay, egConfig, EGL_NO_CONTEXT, egContextAttribs );
-	if ( egContext == EGL_NO_CONTEXT )
-		return -6;
+	return ( eglCreateContext(egDisplay, egConfig, EGL_NO_CONTEXT, egContextAttribs ) );
 
-	if ( eglMakeCurrent(egDisplay, egSurface, egSurface, egContext) == EGL_FALSE )
-		return -7;
-
-	return 1;
 }
 
 unsigned int NWTPI::getWindowWidth() {

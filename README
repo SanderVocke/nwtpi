@@ -26,11 +26,15 @@ $ uname -a
 	Linux raspberrypi 3.6.11+ #371 PREEMPT Thu Feb 7 16:31:35 GMT 2013 armv6l GNU/Linux
 	
 	ie Raspbian 3.6.11
+
+$ gcc --version
+gcc (Debian 4.6.3-14+rpi1) 4.6.3
 	
-!! Don't ask me anything if your RPi Linux version is not 3.6.11 or above. !!
+!! Don't ask me anything if your RPi Linux version is not 3.6.11 or above (vchiq issue ..) !!
 
 4. Dispmanx : some tips
 If you prefer to use dispmanx API, most important things are here :
+NWTPI::NWTPI Constructor :
 	- after a bcm_host_init() call, dispmanx sequence must be : 
 		displayOpen
 		updateStart
@@ -63,5 +67,5 @@ If you prefer to use dispmanx API, most important things are here :
 	Feel free to go into NWTPI in order to understand the whole mess.
 
 5. AUTHORS
-Valéry Seys aka V/, Paris, France
- 
+Valéry Seys, vslash.com - 2013 
+Paris
