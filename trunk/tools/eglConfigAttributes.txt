@@ -1,0 +1,33 @@
+EGL BUFFER SIZE integer depth of the color buffer
+EGL RED SIZE integer bits of Red in the color buffer
+EGL GREEN SIZE integer bits of Green in the color buffer
+EGL BLUE SIZE integer bits of Blue in the color buffer
+EGL LUMINANCE SIZE integer bits of Luminance in the color buffer
+EGL ALPHA SIZE integer bits of Alpha in the color buffer
+EGL ALPHA MASK SIZE integer bits of Alpha Mask in the mask buffer
+EGL BIND TO TEXTURE RGB boolean True if bindable to RGB textures.
+EGL BIND TO TEXTURE RGBA boolean True if bindable to RGBA textures.
+EGL COLOR BUFFER TYPE enum color buffer type
+EGL CONFIG CAVEAT enum any caveats for the configuration
+EGL CONFIG ID integer unique EGLConfig identifier
+EGL CONFORMANT bitmask whether contexts created with this config are conformant
+EGL DEPTH SIZE integer bits of Z in the depth buffer
+EGL LEVEL integer frame buffer level
+EGL MAX PBUFFER WIDTH integer maximum width of pbuffer
+EGL MAX PBUFFER HEIGHT integer maximum height of pbuffer
+EGL MAX PBUFFER PIXELS integer maximum size of pbuffer
+EGL MAX SWAP INTERVAL integer maximum swap interval
+EGL MIN SWAP INTERVAL integer minimum swap interval
+EGL NATIVE RENDERABLE boolean EGL TRUE if native rendering APIs can render to surface
+EGL NATIVE VISUAL ID integer handle of corresponding native visual
+EGL NATIVE VISUAL TYPE integer native visual type of the associated visual
+EGL RENDERABLE TYPE bitmask which client APIs are supported
+EGL SAMPLE BUFFERS integer number of multisample buffers
+EGL SAMPLES integer number of samples per pixel
+EGL STENCIL SIZE integer bits of Stencil in the stencil buffer
+EGL SURFACE TYPE bitmask which types of EGL surfaces are supported.
+EGL TRANSPARENT TYPE enum type of transparency supported
+EGL TRANSPARENT RED VALUE integer transparent red value
+EGL TRANSPARENT GREEN VALUE integer transparent green value
+EGL TRANSPARENT BLUE VALUE integer transparent blue value
+
