@@ -10,6 +10,8 @@
 #include "EGL/eglext.h"
 #include "GLES2/gl2.h"
 
+#include "EGLCapabilities.h"
+
 #ifdef DEBUG_ON
     #define DEBUG( a, b ) logd(a, ostringstream().flush() << b )
 #else
@@ -63,6 +65,8 @@ private:
 	unsigned int	windowWidth;
 	unsigned int 	windowHeight;
 
+	EGLCapabilities* egCapabilities;
+
 	EGLDisplay		egDisplay;
 	EGLConfig 		egConfig;
 	EGLSurface		egSurface;
@@ -76,7 +80,7 @@ private:
 
 public:
 	// NWTPI (string, unsigned int, unsigned int);	XXX waiting for gcc4.7 ( http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1986.pdf )
-	NWTPI (string, unsigned int, unsigned int, bool);
+	NWTPI (string, unsigned int, unsigned int, bool, EGLCapabilities *);
 	~NWTPI ();
 
 	string		 	getWindowTitle();

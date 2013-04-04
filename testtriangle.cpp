@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "EGL/eglext.h"
 
 #include "nwtpi.h"
+#include "EGLCapabilities.h"
 #include "Triangle.h"
 
 using namespace std;
@@ -65,12 +66,13 @@ int main(int argc,char* argv[])
 	
 	try
 	{
-		DEBUG ( "main()", "Create NWTPI drawable" );
+		DEBUG ( "main()", "Create caps");
+		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGB565);
 
-		NWTPI *  drawable = new NWTPI("Triangle",720,480, true);
+		DEBUG ( "main()", "Create NWTPI drawable" );
+		NWTPI *  drawable = new NWTPI("Triangle",720,480, true, caps);
 
 		DEBUG ( "main()", "Create Triangle" );
-
 		Triangle* triangle = new Triangle(drawable);
 
 		gettimeofday ( &t1 , &tz );

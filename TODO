@@ -1,5 +1,12 @@
 1. Looking at && coming closer to jogl::newt jni (bcm_egl, bcm_vc_iv, NewtCommon, eglutil, ..)
+
 2. window resizing, dm elements as an array[] + add, delete, rotate methods.
-3. Managing profiles, capabilities, Context specs.
+
+3. Managing profiles, capabilities, Context specs  
+	R19 : EGLCapabilities
+
 3.1 typed Alpha + alpha managements
-4. Threads event support and auto-drawable. 
+
+4. Threads event support and auto-drawable.
+
+5. NWTPI Class naming convention. 
