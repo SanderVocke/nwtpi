@@ -97,13 +97,13 @@ OpenGL offer 2 level of transparency :
 	    so, here, you will see here your console through your native window.
 	
 5.2 Color buffer transparency : to apply to the fragment shader.
-    NWTPI set color buffer transparency during capabilities profile choose, eg :  
+    NWTPI set color buffer transparency during capabilities profile choice, eg :  
 	EGLCapabilities(EGLCapabilities::RGBA565); // here we are using RGBA, ie RGB + 8bits alpha layer)
 	...
 	Then programming your shader like :
 		void main() { gl_FragColor = vec4 (1.0, 1.0, 1.0, 0.5); }
 	
-	==> will colorize your object in whyte widh a 0.5 alpha transparency through your entire surface
+	==> will colorize your object in whyte with a 0.5 alpha transparency through your entire surface
 	    (in the publishing and printing world, we call it a "knockout" surface).
 
 
