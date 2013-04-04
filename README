@@ -1,27 +1,19 @@
+************************************
+*** QUICK README and USAGE GUIDE ***
+************************************
+
 1. OVERVIEW
 NWTPI is the Native Window Toolkit C++ API designed for the Raspberry Pi (tm).
-This API allow to access to the native Pi video board, headless, meaning without X11 or any other window manager.
-It use the Broadcom low level C API 'DispmanX', and put its use to the background.
+This API allow C++ programers to access to the native Pi video board (headless) directly from OpenGL and C++ code,
+meaning whithout having to deal with the low level C Dispmanx API.
 
 NWTPI was evolved in order to get a simple API like the one done for Java through JOGL::NEWT.
 
-2. USAGE
-2.1
-	NWTPI * drawable = new NWTPI("MyDrawable",width,height);
-	MyGlObject * Triangle = new MyGlObject(drawable);
+In this small guide, you'll find out some tips ; 
+please read carefully example source code in order to understand the whole mess.
 
-//	drawscene include a call to drawable->swapBuffers();
 
-	Triangle->drawScene();											
-	
-2.2
-	NWTPI * drawable = new NWTPI("MyDrawable",width,height);
-	MyGlObject * Triangle = new MyGlObject();
-
-	Triangle->drawScene();
-	drawable->swapBuffers();
-
-3. OS Level : 
+2. OS and compiler requirement 
 $ uname -a 
 	Linux raspberrypi 3.6.11+ #371 PREEMPT Thu Feb 7 16:31:35 GMT 2013 armv6l GNU/Linux
 	
@@ -29,8 +21,28 @@ $ uname -a
 
 $ gcc --version
 gcc (Debian 4.6.3-14+rpi1) 4.6.3
+
+	==> !! Don't ask me anything if your RPi Linux version is not 3.6.11 or above (vchiq issue ..) !!
+
+3. NWTPI use case :
+3.1 GL Object implement a drawing method that call our window swapBuffers method :
 	
-!! Don't ask me anything if your RPi Linux version is not 3.6.11 or above (vchiq issue ..) !!
+	NWTPI * drawable = new NWTPI("MyDrawable",width,height,surfaceOpacity,capabilities);
+	MyGlObject * Triangle = new MyGlObject(drawable);
+
+	Triangle->drawScene();
+	
+	//	drawscene() include :
+	// a call to glDrawElements or glDrawArray
+	// next a call to drawable->swapBuffers();											
+	
+3.2 GL Object won't to deal with FBO management : 
+	NWTPI * drawable = new NWTPI("MyDrawable",width,height);
+	MyGlObject * Triangle = new MyGlObject();
+
+	Triangle->drawScene(); 	// drawScene() simply call glDrawElements() or glDrawArray()
+	
+	drawable->swapBuffers(); // swapBuffers() is then called on our main loop.
 
 4. Dispmanx : some tips
 If you prefer to use dispmanx API, most important things are here :
@@ -66,6 +78,35 @@ NWTPI::NWTPI Constructor :
 
 	Feel free to go into NWTPI in order to understand the whole mess.
 
-5. AUTHORS
+5. GLCapabilities usage : capabilities and alpha surface window (since R19)
+OpenGL offer 2 level of transparency : 
+- surface transparency : when creating a surface window.
+- color buffer transparency : when using program shader.
+
+5.1 Surface transparency : to apply to the background alpha level.
+    NWTPI set surface transparency during native window creation, eg :
+	bool isOpaque = false;
+	... NWTPI("MySurface",width,height,isOpaque,caps);
+	...
+	and then using : 
+	... glClearColor(0.2f, 0.3f, 0.4f, 0.9f);
+	glClear( ..
+	
+	==> whatever 'caps' you use (RGB or RGBA), when calling NWTPI constructor, in the example above, 
+	    background will be set to a 0.9 alpha transparency ; 
+	    so, here, you will see here your console through your native window.
+	
+5.2 Color buffer transparency : to apply to the fragment shader.
+    NWTPI set color buffer transparency during capabilities profile choose, eg :  
+	EGLCapabilities(EGLCapabilities::RGBA565); // here we are using RGBA, ie RGB + 8bits alpha layer)
+	...
+	Then programming your shader like :
+		void main() { gl_FragColor = vec4 (1.0, 1.0, 1.0, 0.5); }
+	
+	==> will colorize your object in whyte widh a 0.5 alpha transparency through your entire surface
+	    (in the publishing and printing world, we call it a "knockout" surface).
+
+
+6. AUTHORS
 Valéry Seys, vslash.com - 2013 
 Paris
