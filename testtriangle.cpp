@@ -67,10 +67,10 @@ int main(int argc,char* argv[])
 	try
 	{
 		DEBUG ( "main()", "Create caps");
-		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGB565);
+		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGBA888);
 
 		DEBUG ( "main()", "Create NWTPI drawable" );
-		NWTPI *  drawable = new NWTPI("Triangle",720,480, true, caps);
+		NWTPI *  drawable = new NWTPI("Triangle",720,480, false, caps);
 
 		DEBUG ( "main()", "Create Triangle" );
 		Triangle* triangle = new Triangle(drawable);

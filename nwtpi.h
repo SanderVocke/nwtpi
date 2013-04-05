@@ -69,6 +69,7 @@ private:
 
 	EGLDisplay		egDisplay;
 	EGLConfig 		egConfig;
+	EGLint			egConfigID;
 	EGLSurface		egSurface;
 	EGLContext		egContext;
 	//EGLClientBuffer 	clientBuffer;	TODO
@@ -92,7 +93,7 @@ public:
 //	EGLContext*		getCurrentContext();			TODO
 	void 			swapBuffers();
 
-	//EGLSurface 		getSurface();
+	EGLint			getEgConfigID();
 
 };
 
