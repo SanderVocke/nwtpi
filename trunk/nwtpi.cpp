@@ -168,21 +168,17 @@ EGLContext NWTPI::egCreateContext() {
 	EGLint 		egMinorVersion;
 	EGLint 		egNumConfigs;
 
+#ifdef DEBUG_ON
+	EGLint		egRedSize;
+	EGLint		egAlphaSize;
+	EGLint		egBufferSize;
+#endif
+
 	EGLNativeWindowType nativeWindow = &dmWindow;				// void * = &EGL_DISPMANX_WINDOW_T
 
-//	static const EGLint egAttribList[] =						// TODO : refinements
-//	{
-//		EGL_RED_SIZE,       5,
-//		EGL_GREEN_SIZE,     6,
-//		EGL_BLUE_SIZE,      5,
-//		EGL_ALPHA_SIZE,     (RGB & ALPHA) ? 8 : EGL_DONT_CARE,
-//		EGL_DEPTH_SIZE,     (RGB & DEPTH) ? 8 : EGL_DONT_CARE,
-//		EGL_STENCIL_SIZE,   (RGB & STENCIL) ? 8 : EGL_DONT_CARE,
-//		EGL_SAMPLE_BUFFERS, (RGB & MULTISAMPLE) ? 1 : 0,
-//		EGL_NONE
-//	};
-
 	EGLint * eglAttribList = egCapabilities->getAttributes();
+
+	DEBUG ("NWTPI::egCreateContext","attribute[1] as RED_SIZE : " << eglAttribList[1]);
 
 	// Pi context => GLES/2 :                 v               v
 	EGLint egContextAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
@@ -196,7 +192,7 @@ EGLContext NWTPI::egCreateContext() {
 //	if ( ! eglGetConfigs(egDisplay, NULL, 0, &egNumConfigs) ) TODO
 //		return -3;
 
-	if ( eglChooseConfig(egDisplay, eglAttribList, &egConfig, 1, &egNumConfigs) == EGL_FALSE )
+	if ( eglChooseConfig(egDisplay, eglAttribList, &egConfig, 1, &egNumConfigs) == EGL_FALSE )	// XXX issue #1
 		throw runtime_error("runtime error : NWTPI::egCreateContext ** eglChooseConfig failed.");
 
 	// TODO eglCreateWindowSurface (,,, attribList [EGL RENDER BUFFER, EGL VG COLORSPACE, and EGL VG ALPHA FORMAT.] ==> Khronos eglspecs-1.4 pp 26
@@ -204,7 +200,16 @@ EGLContext NWTPI::egCreateContext() {
 	if ( egSurface == EGL_NO_SURFACE )
 		throw runtime_error("runtime error : NWTPI::egCreateContext ** EGL_NO_SURFACE");
 
-	DEBUG ("NWTPI::egCreateContext","egConfig #" << egConfig );
+	eglGetConfigAttrib(egDisplay,egConfig,EGL_CONFIG_ID,&egConfigID);	// getting configID
+
+#ifdef DEBUG_ON
+	eglGetConfigAttrib(egDisplay,egConfig,EGL_BUFFER_SIZE,&egBufferSize);
+	eglGetConfigAttrib(egDisplay,egConfig,EGL_ALPHA_SIZE,&egAlphaSize);
+	eglGetConfigAttrib(egDisplay,egConfig,EGL_RED_SIZE,&egRedSize);
+#endif
+
+	DEBUG ("NWTPI::egCreateContext","egConfig #" << egConfigID << ", BufferSz : " << egBufferSize << ", AlphaSz : " << egAlphaSize << ", RedSz : " << egRedSize );
+
 	return ( eglCreateContext(egDisplay, egConfig, EGL_NO_CONTEXT, egContextAttribs ) );
 
 }
@@ -233,6 +238,9 @@ EGLSurface NWTPI::getCurrentSurface() {
 	return egSurface;
 }
 
+EGLint 	NWTPI::getEgConfigID() {
+	return egConfigID;
+}
 #ifdef DEBUG_ON
 void NWTPI::logd(string method, ostream& message) {
 	ostringstream& s = dynamic_cast<ostringstream&>(message);

@@ -54,7 +54,6 @@ private:
 	vector <EGLint> attributes;
 
 	static const EGLint RGB565_SET[];
-	static const EGLint RGBA565_SET[];
 	static const EGLint RGB888_SET[];
 	static const EGLint RGBA888_SET[];
 
@@ -65,12 +64,13 @@ private:
 #endif
 
 public:
-	enum RGB_CAPS_ENUM : unsigned int { RGB565=0, RGBA565, RGB888, RGBA888 };
+	enum RGB_CAPS_ENUM : unsigned int { RGB565=0, RGB888, RGBA888 };
 
 	EGLCapabilities(RGB_CAPS_ENUM);
 	~EGLCapabilities();
 
 	EGLint* getAttributes();
+//	EGLint* getEglConfigAttrib(unsigned int, EGLenum);
 
 };
 
