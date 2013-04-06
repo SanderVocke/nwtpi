@@ -39,6 +39,8 @@ private:
 
 	static const EGLint * rgbProfiles[];
 
+	static const EGLint raspberryPiEglContext[];
+
 #ifdef DEBUG_ON
 	void logd(string , ostream& );
 #endif
@@ -49,8 +51,8 @@ public:
 	EGLCapabilities(RGB_CAPS_ENUM);
 	~EGLCapabilities();
 
-	EGLint* getAttributes();
-//	EGLint* getEglConfigAttrib(unsigned int, EGLenum);
+	EGLint* getConfigAttributes();
+	EGLint* getContextAttributes();
 
 };
 
