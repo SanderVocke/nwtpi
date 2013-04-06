@@ -54,6 +54,8 @@ public:
 	EGLint* getConfigAttributes();
 	EGLint* getContextAttributes();
 
+	void setAttribute(EGLenum, EGLint);
+
 };
 
 #endif /* _EGLCAPABILITIES_H */

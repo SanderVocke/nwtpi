@@ -67,7 +67,10 @@ int main(int argc,char* argv[])
 	try
 	{
 		DEBUG ( "main()", "Create caps");
-		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGBA888);
+		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGBA888);		// getting a profile (this one will return config id #7)
+		caps->setAttribute(EGL_DEPTH_SIZE,24);										// and add a conformant EGL attrib specs to our choosen profile / this one will return config id #3
+		caps->setAttribute(EGL_BIND_TO_TEXTURE_RGB, 0);
+		caps->setAttribute(EGL_BIND_TO_TEXTURE_RGBA, 0);							// ... and this 2 last ones will return config id #11
 
 		DEBUG ( "main()", "Create NWTPI drawable" );
 		NWTPI *  drawable = new NWTPI("Triangle",720,480, false, caps);

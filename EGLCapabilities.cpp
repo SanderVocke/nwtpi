@@ -24,6 +24,8 @@ const unsigned int EGLCapabilities::rgbsetSize[] = {
 // Pi context => GLES/2 :                                             v               v
 const EGLint EGLCapabilities::raspberryPiEglContext[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
 
+
+
 EGLCapabilities::EGLCapabilities(RGB_CAPS_ENUM choosenProfile) {
 
 	attributes.insert(attributes.end(), &rgbProfiles[choosenProfile][0], &rgbProfiles[choosenProfile][rgbsetSize[choosenProfile]]);
@@ -41,6 +43,14 @@ EGLint * EGLCapabilities::getContextAttributes() {
 	return (EGLint *) &raspberryPiEglContext;
 }
 
+// setAttributes don't verify EGL conformant parameters XXX
+void EGLCapabilities::setAttribute(EGLenum egEnum, EGLint value) {
+	attributes.pop_back();
+
+	attributes.push_back(egEnum);
+	attributes.push_back(value);
+	attributes.push_back(EGL_NONE);
+}
 /**
  *  \fn		ELGint * getEglConfigAttrib(unsigned int eglConfignumber, EGLenum eglType)
  *  \brief	return eglGetConfigAttrib attribute value.
