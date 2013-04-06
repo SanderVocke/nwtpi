@@ -175,6 +175,7 @@ EGLContext NWTPI::egCreateContext() {
 #endif
 
 	EGLNativeWindowType nativeWindow = &dmWindow;						// void * = &EGL_DISPMANX_WINDOW_T
+
 	EGLint * eglAttribList = egCapabilities->getConfigAttributes();
 
 	DEBUG ("NWTPI::egCreateContext","attribute[1] as RED_SIZE : " << eglAttribList[1]);
