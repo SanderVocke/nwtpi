@@ -29,33 +29,13 @@ using namespace std;
 
 class EGLCapabilities {
 private:
-	unsigned int  	bufferSize;
-	unsigned int    redSize;
-	unsigned int    greenSize;
-	unsigned int    blueSize;
-	unsigned int    alphaSize;
-
-	unsigned int    depthSize;
-	unsigned int	stencilSize;
-
-	// Support for transparent windows containing OpenGL content
-	bool 	backgroundOpaque;
-	int     transparentValueRed;
-	int     transparentValueGreen;
-	int     transparentValueBlue;
-	int     transparentValueAlpha;
-
-	// Switch for on- or offscreen
-	bool onscreen;
-
-	// offscreen bitmap mode
-	bool isBitmap;
-
 	vector <EGLint> attributes;
 
 	static const EGLint RGB565_SET[];
 	static const EGLint RGB888_SET[];
 	static const EGLint RGBA888_SET[];
+
+	static const unsigned int rgbsetSize[];
 
 	static const EGLint * rgbProfiles[];
 
@@ -64,7 +44,7 @@ private:
 #endif
 
 public:
-	enum RGB_CAPS_ENUM : unsigned int { RGB565=0, RGB888, RGBA888 };
+	enum RGB_CAPS_ENUM : unsigned int { RGB565=0, RGB888, RGBA888, RGB_CAPS_ENUM_COUNT };
 
 	EGLCapabilities(RGB_CAPS_ENUM);
 	~EGLCapabilities();

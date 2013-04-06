@@ -15,12 +15,15 @@ const EGLint * EGLCapabilities::rgbProfiles[] = {
 			(EGLint *) RGBA888_SET
 };
 
+const unsigned int EGLCapabilities::rgbsetSize[] = {
+		sizeof(EGLCapabilities::RGB565_SET) / sizeof(EGLint),
+		sizeof(EGLCapabilities::RGB888_SET) / sizeof(EGLint),
+		sizeof(EGLCapabilities::RGBA888_SET) / sizeof(EGLint)
+};
 
 EGLCapabilities::EGLCapabilities(RGB_CAPS_ENUM choosenProfile) {
 
-	unsigned int rgbsetSize = sizeof(RGB565_SET) / sizeof(EGLint);
-
-	attributes.insert(attributes.end(), &rgbProfiles[choosenProfile][0], &rgbProfiles[choosenProfile][rgbsetSize]);
+	attributes.insert(attributes.end(), &rgbProfiles[choosenProfile][0], &rgbProfiles[choosenProfile][rgbsetSize[choosenProfile]]);
 
 	attributes.insert(attributes.end(), EGL_NONE);
 }

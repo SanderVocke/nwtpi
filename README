@@ -98,7 +98,7 @@ OpenGL offer 2 level of transparency :
 	
 5.2 Color buffer transparency : to apply to the fragment shader.
     NWTPI set color buffer transparency during capabilities profile choice, eg :  
-	EGLCapabilities(EGLCapabilities::RGBA565); // here we are using RGBA, ie RGB + 8bits alpha layer)
+	EGLCapabilities(EGLCapabilities::RGBA888); // here we are using RGBA, ie RGB + 8bits alpha layer)
 	...
 	Then programming your shader like :
 		void main() { gl_FragColor = vec4 (1.0, 1.0, 1.0, 0.5); }
