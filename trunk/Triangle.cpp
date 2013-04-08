@@ -39,12 +39,12 @@ Triangle::Triangle() {
 		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
 }
 
-Triangle::Triangle(NWTPI* _drawable) {
-	drawable = _drawable;
-	createBufferObjects();
-	if ( createProgramAndShaders() == false)
-		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
-}
+//Triangle::Triangle(NWTPI* _drawable) {
+//	drawable = _drawable;
+//	createBufferObjects();
+//	if ( createProgramAndShaders() == false)
+//		cout << "==> Triangle::createProgramAndShaders : NOK" << endl;
+//}
 Triangle::~Triangle() {
 }
 
@@ -195,7 +195,7 @@ void Triangle::drawScene ()
 
 	glFlush();
 
-	//drawable->swapBuffers();															// TEST OK
+	//drawable->swapBuffers();															// TEST OK :: XXX R35 TODO w/ EGLWindow.
 	//eglSwapBuffers(drawable->egDisplay, drawable->egSurface);							// TEST OK
 	//eglSwapBuffers(drawable->getCurrentDisplay(), drawable->getCurrentSurface());		// TEST OK
 
