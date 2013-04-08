@@ -1,0 +1,6 @@
+1. Go into your fresh 'SVN checkout' NWTPI directory
+2. On your RPi Console, type : 
+	$ make
+	./testtriangle.elf
+	
+ 
