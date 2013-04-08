@@ -37,7 +37,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 
-#include "nwtpi.h"
+//#include "nwtpi.h"
+#include "EGLWindow.h"
 #include "EGLCapabilities.h"
 #include "Triangle.h"
 
@@ -73,10 +74,11 @@ int main(int argc,char* argv[])
 		caps->setAttribute(EGL_BIND_TO_TEXTURE_RGBA, 0);							// ... and this 2 last ones will return config id #11
 
 		DEBUG ( "main()", "Create NWTPI drawable" );
-		NWTPI *  drawable = new NWTPI("Triangle",720,480, false, caps);
+		//NWTPI *  drawable = new NWTPI("Triangle",720,480, false, caps);
+		EGLWindow * EGLWindowSurface = new EGLWindow("Triangle",720,480,false,caps);	// default EGLWindow is a windowSurface
 
 		DEBUG ( "main()", "Create Triangle" );
-		Triangle* triangle = new Triangle(drawable);
+		Triangle* triangle = new Triangle();
 
 		gettimeofday ( &t1 , &tz );
 		while ( true ) 
@@ -87,7 +89,7 @@ int main(int argc,char* argv[])
 
 			triangle->drawScene();
 
-			drawable->swapBuffers();
+			EGLWindowSurface->swapBuffers();
 
 			totaltime += deltatime;
 			frames++;

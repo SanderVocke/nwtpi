@@ -5,8 +5,8 @@
  *      Author: valery
  */
 
-#ifndef _EGLCAPABILITIES_H
-#define _EGLCAPABILITIES_H
+#ifndef _EGL_CAPABILITIES_H
+#define _EGL_CAPABILITIES_H
 
 #include <iostream>
 #include <sstream>
@@ -58,4 +58,4 @@ public:
 
 };
 
-#endif /* _EGLCAPABILITIES_H */
+#endif /* _EGL_CAPABILITIES_H */
