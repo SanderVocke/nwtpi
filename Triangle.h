@@ -8,8 +8,6 @@
 #include "EGL/eglext.h"
 #include "GLES2/gl2.h"
 
-#include "nwtpi.h"
-
 using namespace std;
 
 #ifdef DEBUG_ON
@@ -21,7 +19,7 @@ using namespace std;
 class Triangle {
 	private:
 
-		NWTPI *drawable;
+		//NWTPII *drawable; 	// XXX R35 TODO EGLWindow
 	
 		int width;
 		int height;
@@ -61,7 +59,7 @@ class Triangle {
 
 	public:
 		Triangle();
-		Triangle(NWTPI *);
+//		Triangle(NWTPI *);	since R35 TODO (redo)
 		~Triangle();
 		void 	drawScene();
 		void 	clearBackground(float blueColor);
