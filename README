@@ -22,7 +22,7 @@ functionality.
 If you find a release number that is too low from the actual one, don't worry, readmeFile tips will come later.
 If you find errors or something weird, google code is for you : open an issue.
 
-You'll find NWTPI diagrams and draws at vslash.com and code.google
+You'll find NWTPI class diagrams and overview at vslash.com and NWTPI code.google project home.
 * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - 
 
 
@@ -49,64 +49,64 @@ gcc (Debian 4.6.3-14+rpi1) 4.6.3
 	
 	See the provided example "testtriangle.cpp" for more details. 
 
-3. GLCapabilities usage : capabilities and alpha surface window (R19)
+3. OGLCapabilities usage : capabilities and alpha surface window (R19)
 	Overview - Context and Config Attributes in one single class.
 	Because NWTPI is a Raspberry Pi dedicated API, we use a single class in order to define both context & config attributes.
-	This mean here we will use the same eglContextAttributes for any surfaces created later, ie many EGLCapabilities objects will
+	This mean here we will use the same eglContextAttributes for any surfaces created later, ie many OEGLCapabilities objects will
 	share the same ContextAttributes.
-	( but NWTPI will offer a way to create different configuration for any surfaces later defined).
-	Keep in mind that EGLContext, as specified by Khronos, define the state machine to be use on our board, ie in our case, OpenGLES2.
+	( but NWTPI will offer a way to create different configuration for surfaces later defined).
+	Keep in mind that EGLContext, as specified by Khronos, define the state machine to be used on our board, ie in our case, OpenGLES2.
 	Because our Raspberry Pi don't support OpenVG, we don't need to define different rendering context.
 	In simple words :
-	- every capabilities define a single rendering context attributes being is the same for all.
+	- every capabilitie defines a single rendering context attributes being the same for all.
 	- one configuration will use one capability.
 	- a configuration attributes will define properties to be associated to a specific surface. 
 	- a surface has one configuration.
-	- many surface could have the same configuration, or use different configuration.
+	- many surfaces could have the same configuration, OR use different configuration.
 	 
 3.1 OpenGL offer 2 level of transparency : 
 - surface transparency : when creating a surface window.
-- color buffer transparency : when using program shader.
+- color buffer transparency : when using program shader
 
 3.1.1 Surface transparency : to apply to the background alpha level.
     NWTPI set surface transparency during native window creation, eg :
-	bool isOpaque = false;
-	... NWTPI("MySurface",width,height,isOpaque,caps);
+	unsigned char alphaLevel = 255;		// window background totally transparent.
+	... NWTPI("MySurface",width,height,alphaLevel,caps);
 	...
 	and then using : 
 	... glClearColor(0.2f, 0.3f, 0.4f, 0.9f);
 	glClear( ..
 	
 	==> whatever 'caps' you use (RGB or RGBA), when calling NWTPI constructor, in the example above, 
-	    background will be set to a 0.9 alpha transparency ; 
-	    so, here, you will see here your console through your native window.
+	    background will be set to a 0.9 alpha transparency ; this is possible because our window has an alpha level > 0. 
+	    so, here, you will see here your console through your native window at 0.9 transparency level.
 	
 3.1.2 Color buffer transparency : to apply to the fragment shader.
     NWTPI set color buffer transparency during capabilities profile choice, eg :  
-	EGLCapabilities(EGLCapabilities::RGBA888); // here we are using RGBA, ie RGB + 8bits alpha layer)
+	OEGLCapabilities(EGLCapabilities::RGBA888); // here we are using RGBA, ie RGB + 8bits alpha layer)
 	...
 	Then programming your shader like :
 		void main() { gl_FragColor = vec4 (1.0, 1.0, 1.0, 0.5); }
 	
-	==> will colorize your object in whyte with a 0.5 alpha transparency through your entire surface
-	    (in the publishing and printing world, we call it a "knockout" surface).
+	==> will colorize your object in whyte with a 0.5 alpha transparency through your entire surface, whatever alpha was set to your background
+		(but still != 0). (in the publishing and printing world, we call it a "knockout" surface).
 
-3.2 EGLCapabilities::setAttribute(...) 
+3.2 OEGLCapabilities::setAttribute(...) 
 	Method don't check over EGL compliance. So, you're responsible to put the right value to the right place.
 	setAttribute() add automatically EGL_NONE as expected by EGL at the end of its private attributes[], so don't add it.
 	
-3.3 EGLCapabilities::getConfigAttributes()
+3.3 OEGLCapabilities::getConfigAttributes()
 	getConfigAttributes() return expected pointer to attributes array.
 	When things don't work, remember to check selection criteria, sort order and sort priority on EGLConfig attributes as 
 	specified by Khronos (see eglspecs-1.4).
 
-3.4 EGLCapabilities::getContextAttributes()
+3.4 OEGLCapabilities::getContextAttributes()
 	Their is no choice here, Raspberry Pi context being 'embedded' ; so method return a const array[] with right values. 	
 
-4. EGLWindow use case : (R33)
+4. OEGLWindow use case : (R33)
 4.1 your OpenGL scene implement a drawing method that call our surfaceWindow swapBuffers method :
 	
-	EGLWindow * windowSurface = new EGLWindow("MyDrawable",width,height,surfaceOpacity,capabilities);
+	OEGLWindow * window = new OEGLWindow("MyDrawable",width,height,alphaLevel,capabilities);
 	MyGlObject * Triangle = new MyGlObject(windowSurface);
 
 	Triangle->drawScene();
@@ -116,12 +116,12 @@ gcc (Debian 4.6.3-14+rpi1) 4.6.3
 	// and thena call to drawable->swapBuffers();											
 	
 4.2 your OpenGL scene won't to deal with FBO management : 
-	EGLWindow * windowSurface = new EGLWindow("MyDrawable",width,height,surfaceOpacity,capabilities);
+	OEGLWindow * window = new OEGLWindow("MyDrawable",width,height,alphaLevel,capabilities);
 	MyGlObject * Triangle = new MyGlObject();
 
 	Triangle->drawScene(); 	// drawScene() simply call glDrawElements() or glDrawArray()
 	
-	windowSurface->swapBuffers(); // swapBuffers() is then called from our main loop.
+	window->swapBuffers(); // swapBuffers() is then called from our main loop.
 
 Annexe
 Dispmanx : some tips (R1)
