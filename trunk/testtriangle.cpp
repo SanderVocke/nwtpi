@@ -37,12 +37,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "EGL/egl.h"
 #include "EGL/eglext.h"
 
-//#include "nwtpi.h"
-#include "EGLWindow.h"
-#include "EGLCapabilities.h"
+#include "NWTPI.h"
+
 #include "Triangle.h"
 
 using namespace std;
+using namespace nwtpi;
 
 #ifdef DEBUG_ON
 #define DEBUG( a, b ) logdebug(a, ostringstream().flush() << b )
@@ -68,14 +68,14 @@ int main(int argc,char* argv[])
 	try
 	{
 		DEBUG ( "main()", "Create caps");
-		EGLCapabilities * caps = new EGLCapabilities(EGLCapabilities::RGBA888);		// getting a profile (this one will return config id #7)
+		OEGLCapabilities * caps = new OEGLCapabilities(OEGLCapabilities::RGBA888);		// getting a profile (this one will return config id #7)
 		caps->setAttribute(EGL_DEPTH_SIZE,24);										// and add a conformant EGL attrib specs to our choosen profile / this one will return config id #3
 		caps->setAttribute(EGL_BIND_TO_TEXTURE_RGB, 0);
 		caps->setAttribute(EGL_BIND_TO_TEXTURE_RGBA, 0);							// ... and this 2 last ones will return config id #11
 
 		DEBUG ( "main()", "Create NWTPI drawable" );
 		//NWTPI *  drawable = new NWTPI("Triangle",720,480, false, caps);
-		EGLWindow * EGLWindowSurface = new EGLWindow("Triangle",720,480,false,caps);	// default EGLWindow is a windowSurface
+		OEGLWindow * oeglWindow = new OEGLWindow("Triangle",720,480,0,caps);	// default EGLWindow is a windowSurface
 
 		DEBUG ( "main()", "Create Triangle" );
 		Triangle* triangle = new Triangle();
@@ -89,7 +89,7 @@ int main(int argc,char* argv[])
 
 			triangle->drawScene();
 
-			EGLWindowSurface->swapBuffers();
+			oeglWindow->swapBuffers();
 
 			totaltime += deltatime;
 			frames++;

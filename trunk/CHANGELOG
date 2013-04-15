@@ -1,0 +1,7 @@
+2013/04/15	R38			complete new design including classes rewriting : 
+						> NWTPI::NativeWindow + NativeElement + NativeResource
+						> NWTPI::OEGLWindow + OEGLCapabilities
+						Naming conv. : OEGL instead of EGL in order to avoid type mismatch with EGL.
+						Maintain testtriangle.cpp example as simple as expected with very small change.
+
+2013/03/27	R1-R37		initials releases ; working classes (w/o design) 

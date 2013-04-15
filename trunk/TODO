@@ -1,27 +1,41 @@
-! NWTPI Class naming convention.
-X	R33
+X NWTPI Class naming convention.
+X	R33, R38
+X	Classes directories as 'Java package' 
 
 * window resizing, dm elements as an array[] + add, delete, rotate methods.
-X 	NativeWindow		R33
->	pbuffer
->	pixmap
->	element[]
->	add, delete, rotate
+X 	NativeWindow			R33
+X	vector <NativeElement>	R38
+X		add, 
+>		delete, 
+>		rotate
+>	element resource as pixmap
+>	NativeWindow as pure surface manager (w/o OEGLWindow)
 
 * HDMI/CEC support
 
 * Managing profiles, capabilities, Context specs
-X	EGLCapabilities 	R19
->	EGLContext
+X	OEGLCapabilities 		R19
+>	OEGLContext
 
-* NativeWindow and EGLWindow wrapper
-X	NativeWindow		R33
-X	EGLWindow 			R33
+* NativeWindow and OEGLWindow wrapper
+X	NativeWindow			R33
+X	OEGLWindow 				R33
+>	pbuffer
+>	pixmap
 
-* Threaded event support, listener and auto-drawable.
+* NWTPI common 
+X	NWTPI.h					R38
+
+* Threads event support, listener, auto-drawable, animator
+>	NativeElement updateListener
+>	OEGL Surface change listener
 
 * human interface event support 
 >	mouse
 >	keyboard
 
 * native sound support
+
+* Make target :
+>	shared library
+>	ar library

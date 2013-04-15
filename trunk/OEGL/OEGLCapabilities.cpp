@@ -2,49 +2,51 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "EGLCapabilities.h"
+#include "OEGLCapabilities.h"
+
+namespace nwtpi {
 
 // Static data initialization
-const EGLint EGLCapabilities::RGB565_SET[] =  { EGL_BUFFER_SIZE, 16 };
-const EGLint EGLCapabilities::RGB888_SET[] =  { EGL_BUFFER_SIZE, 24, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8 };
-const EGLint EGLCapabilities::RGBA888_SET[] = { EGL_BUFFER_SIZE, 32, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8 };
+const EGLint OEGLCapabilities::RGB565_SET[] =  { EGL_BUFFER_SIZE, 16 };
+const EGLint OEGLCapabilities::RGB888_SET[] =  { EGL_BUFFER_SIZE, 24, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8 };
+const EGLint OEGLCapabilities::RGBA888_SET[] = { EGL_BUFFER_SIZE, 32, EGL_RED_SIZE, 8, EGL_GREEN_SIZE, 8, EGL_BLUE_SIZE, 8, EGL_ALPHA_SIZE, 8 };
 
-const EGLint * EGLCapabilities::rgbProfiles[] = {
+const EGLint * OEGLCapabilities::rgbProfiles[] = {
 			(EGLint *) RGB565_SET,
 			(EGLint *) RGB888_SET,
 			(EGLint *) RGBA888_SET
 };
 
-const unsigned int EGLCapabilities::rgbsetSize[] = {
-		sizeof(EGLCapabilities::RGB565_SET) / sizeof(EGLint),
-		sizeof(EGLCapabilities::RGB888_SET) / sizeof(EGLint),
-		sizeof(EGLCapabilities::RGBA888_SET) / sizeof(EGLint)
+const unsigned int OEGLCapabilities::rgbsetSize[] = {
+		sizeof(OEGLCapabilities::RGB565_SET) / sizeof(EGLint),
+		sizeof(OEGLCapabilities::RGB888_SET) / sizeof(EGLint),
+		sizeof(OEGLCapabilities::RGBA888_SET) / sizeof(EGLint)
 };
 
 // Pi context => GLES/2 :                                             v               v
-const EGLint EGLCapabilities::raspberryPiEglContext[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
+const EGLint OEGLCapabilities::raspberryPiEglContext[] = { EGL_CONTEXT_CLIENT_VERSION, 2, EGL_NONE, EGL_NONE };
 
 
 
-EGLCapabilities::EGLCapabilities(RGB_CAPS_ENUM choosenProfile) {
+OEGLCapabilities::OEGLCapabilities(NWTPI_RGB_CAPS_ENUM choosenProfile) {
 
 	attributes.insert(attributes.end(), &rgbProfiles[choosenProfile][0], &rgbProfiles[choosenProfile][rgbsetSize[choosenProfile]]);
 
 	attributes.insert(attributes.end(), EGL_NONE);
 }
 
-EGLCapabilities::~EGLCapabilities() { }
+OEGLCapabilities::~OEGLCapabilities() { }
 
-EGLint * EGLCapabilities::getConfigAttributes() {
+EGLint * OEGLCapabilities::getConfigAttributes() {
 	return &attributes[0];
 }
 
-EGLint * EGLCapabilities::getContextAttributes() {
+EGLint * OEGLCapabilities::getContextAttributes() {
 	return (EGLint *) &raspberryPiEglContext;
 }
 
 // setAttributes don't verify EGL conformant parameters XXX
-void EGLCapabilities::setAttribute(EGLenum egEnum, EGLint value) {
+void OEGLCapabilities::setAttribute(EGLenum egEnum, EGLint value) {
 	attributes.pop_back();
 
 	attributes.push_back(egEnum);
@@ -60,7 +62,7 @@ void EGLCapabilities::setAttribute(EGLenum egEnum, EGLint value) {
  *
  *  (doxygen template test)
  */
-//EGLint * EGLCapabilities::getEglConfigAttrib(EGLConfig eglConfig, EGLenum eglType) {
+//EGLint * OEGLCapabilities::getEglConfigAttrib(EGLConfig eglConfig, EGLenum eglType) {
 //	EGLDisplay display;
 //	EGLint numConfigs;
 //	static EGLint value;
@@ -87,8 +89,10 @@ void EGLCapabilities::setAttribute(EGLenum egEnum, EGLint value) {
 //}
 
 #ifdef DEBUG_ON
-void EGLCapabilities::logd(string method, ostream& message) {
+void OEGLCapabilities::logd(string method, ostream& message) {
 	ostringstream& s = dynamic_cast<ostringstream&>(message);
 	cout << "==> " << method << " : " << s.str() << endl;
 }
 #endif
+
+} // namespace nwtpi

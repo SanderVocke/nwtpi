@@ -1,6 +1,5 @@
 1. Go into your fresh 'SVN checkout' NWTPI directory
-2. On your RPi Console, type : 
+2. Comment/uncomment DEBUG_ON in Makefile (default: DEBUG_ON is defined ==> expect >200K elf target)
+3. On your RPi Console : 
 	$ make
-	./testtriangle.elf
-	
- 
+	$ ./testtriangle.elf

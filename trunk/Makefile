@@ -1,27 +1,53 @@
-PGM=testtriangle.elf
+PGM=testtriangle
 
+PACKAGES= Native OEGL
 
-SOURCES= $(wildcard *.cpp)
-HEADERS= $(wildcard *.h)
+NWTPI_SOURCES= $(foreach P,$(PACKAGES),$(wildcard $(P)/*.cpp))
+NWTPI_INCLUDES= $(foreach I,$(PACKAGES), -I./$(I))
+
 OBJDIR=obj
-OBJS=$(patsubst %.cpp, $(OBJDIR)/%.o, $(SOURCES))
+NWTPI_OBJS=$(patsubst %.cpp, $(OBJDIR)/%.o, $(notdir $(NWTPI_SOURCES)))
+
+DEBUG_ON=1
 
 GPP=g++
-CFLAGS+=-std=c++0x -Wall -ggdb -DDEBUG_ON
+CFLAGS+=-std=c++0x -Wall -O
+
+ifdef DEBUG_ON
+CFLAGS+=-ggdb
+endif
+
+INCLUDES+=-I/opt/vc/include -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I. $(NWTPI_INCLUDES)
 LDFLAGS+=-L/opt/vc/lib -lbcm_host -lGLESv2 -lEGL 
-INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux -I./
 
-all: showme $(PGM)
+all: $(OBJDIR) showme $(PGM)
 
-$(OBJDIR)/%.o: %.cpp $(HEADERS)
-	$(GPP) $(CFLAGS) $(INCLUDES) -c $< -o $@
+#$(PGM): $(OBJS)
+#	$(GPP) -Wl $(LDFLAGS) $(OBJS) -o $(@)
 
-$(PGM): $(OBJS)
-	$(GPP) -Wl $(LDFLAGS) $(OBJS) -o $@
+
+testtriangle: $(NWTPI_OBJS) $(OBJDIR)/testtriangle.o $(OBJDIR)/Triangle.o
+	$(GPP) -Wl $(LDFLAGS) $(^) -o $(@)
+
+
+$(OBJDIR):
+	@if ! [ -d $(@) ]; then mkdir -p $(@); fi
+
+# ./
+$(OBJDIR)/%.o: %.cpp
+	$(GPP) $(CFLAGS) $(INCLUDES) -c $< -o $(@)
+
+# ./Native
+$(OBJDIR)/%.o: Native/%.cpp
+	$(GPP) $(CFLAGS) $(INCLUDES) -c $< -o $(@)
+	
+# ./OEGL
+$(OBJDIR)/%.o: OEGL/%.cpp
+	$(GPP) $(CFLAGS) $(INCLUDES) -c $< -o $(@)
 
 clean:
-	@for i in $(OBJS); do (if test -e "$$i"; then ( echo "==> removing $$i" && rm $$i ); fi ); done
-	@echo "==> removing $(PGM)" && rm -f $(PGM)
+	@for i in $(OBJDIR)/*; do (if test -e "$$i"; then ( echo "==> removing $$i" && rm $$i ); fi ); done
+	@for i in $(PGM);  do (if test -e "$$i"; then ( echo "==> removing $$i" && rm $$i ); fi ); done
 
 showme:
 	@uname -a
