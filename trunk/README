@@ -19,7 +19,7 @@ FOREWORD
 NWTPI is in an active development stage ; sometimes, i forgot to update this guide. 
 Generally, i put the release version number - like (R22) - as a reference to identify a new and fresh class or
 functionality.
-If you find a release number that is too low from the actual one, don't worry, readmeFile tips will come later.
+If you find a release number that is too low from the current one, don't worry, readmeFile tips will come later.
 If you find errors or something weird, google code is for you : open an issue.
 
 You'll find NWTPI class diagrams and overview at vslash.com and NWTPI code.google project home.
