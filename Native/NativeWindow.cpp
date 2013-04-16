@@ -8,8 +8,11 @@ bool 		 NativeWindow::deviceOpenState[] = { false, false, false, false };
 NativeWindow::NativeWindow (unsigned int width, unsigned int height, NATIVE_DEVICE_ENUM _device, unsigned char alpha)
 	: device(_device), windowWidth(width), windowHeight(height), windowAlpha(alpha), currentElementId(-1)
 {
+
 	displayOpen(device);
-	createRegion();
+
+	makeCurrentElement(addElement());
+
 }
 
 NativeWindow::~NativeWindow() {
@@ -53,42 +56,43 @@ int NativeWindow::displayClose(DISPMANX_DISPLAY_HANDLE_T disp) {
 }
 
 /**
- * 		\fn		void createRegion()
- * 		\brief	create a region by adding a new element that will fill the entire window
+ * 		\fn		int addElement()
+ * 		\brief	add an element that will fill the entire window
  * 		\param	none
- * 		\return void
+ * 		\return (int) elementId
  */
-void NativeWindow::createRegion()
+int NativeWindow::addElement()
 {
-	createRegion(0,0,windowWidth,windowHeight,windowAlpha);
+	return ( addElement(0, 0, windowWidth, windowHeight, windowAlpha) );
 }
 
 /**
- *  	\fn		void createRegion(unsigned int x, unsigned int y, unsigned int width, unsigned int height, bool opaqueness)
- *  	\brief	create a marked out region by adding a new element will fill the region
+ *  	\fn		int addElement(unsigned int x, unsigned int y, unsigned int width, unsigned int height, bool opaqueness)
+ *  	\brief	add an element created from a marked out region
  *  	\param	x Position
  *  	\param 	y Position
  *  	\param	width Size
  *  	\param	height Size
  *  	\param	alpha Alpha level (0x00=no alpha, 0xff full transparent)
- *  	\return	void
+ *  	\return	(int) elementId
  */
-void NativeWindow::createRegion(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned char windowAlphaLevel)
+int NativeWindow::addElement(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned char windowAlphaLevel)
 {
 	NativeElement * elem = new NativeElement(displayHandle, x, y, w, h, windowAlphaLevel );
 
 	elements.push_back(elem);
-	currentElementId = elem->getId();
+
+	return ( elem->getId() );
 
 }
 
 /**
- *  	\fn		int createRegionWithImage
- *  	\brief	create a marked out region with from image resource
+ *  	\fn		int addElementImage
+ *  	\brief	add an element created from an image resource
  *  	\param	uint width, uint height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData
- *  	\return	int
+ *  	\return	(int) elementId
  */
-//int NativeWindow::createRegionWithImage(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData)
+//int NativeWindow::addElementImage(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData)
 //{
 //	//NativeElement * elem;
 //	// resource_create
@@ -101,6 +105,22 @@ void NativeWindow::createRegion(unsigned int x, unsigned int y, unsigned int w, 
 //
 //
 //}
+
+/**
+ * 		\fn		void makeCurrentElement
+ * 		\brief	set currentElementId
+ * 		\param	int elementId
+ * 		\return	void
+ */
+void NativeWindow::makeCurrentElement(int elementId)
+{
+	currentElementId = elementId;
+}
+
+int NativeWindow::getLastElementId()
+{
+	return elements.back()->getId();
+}
 
 #ifdef DEBUG_ON
 void NativeWindow::logd(string method, ostream& message) {
