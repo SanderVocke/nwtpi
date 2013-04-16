@@ -60,7 +60,6 @@ public:
 	DISPMANX_ELEMENT_HANDLE_T	getHandle();
 	VC_DISPMANX_ALPHA_T			getAlpha();
 
-	//EGL_DISPMANX_WINDOW_T		getEglNativeWindowHandle();	// cooked Egl window handle elementHandle, width, height TODO
 	EGLNativeWindowType			getEglNativeWindowType();	// cooked Egl window handle elementHandle, width, height
 
 };

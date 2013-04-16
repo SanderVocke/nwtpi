@@ -28,17 +28,18 @@ namespace nwtpi {
 
 		OEGLCapabilities* capabilities;
 
-		EGLDisplay 		egDisplay;
-		EGLConfig 		egConfig;
-		EGLint 			egConfigId;
-		EGLSurface 		egSurface;
-		//vector <EGLSurface> egSurfaces;		// TODO many surfaces / elements associations.
-		int  			surfaceId;						// ie NativeElementId
-		EGLContext 		egContext;
+		EGLDisplay 		display;
+		EGLConfig 		config;
+		EGLint 			configId;
+		EGLSurface 		surface;
+		//vector <OEGLSurface> surfaces;		// TODO many surfaces / elements associations.
+		int  			currentSurfaceId;		// tied to  Native elementId
+
+		EGLContext 		context;
 		//EGLClientBuffer 	clientBuffer;	TODO
 
 		EGLContext 		createContext();
-		//bool  		egCreateSurface();	TODO
+
 		//bool  		egCreateWindow();	TODO
 		//bool  		egCreateConfig();	TODO
 
@@ -47,20 +48,26 @@ namespace nwtpi {
 	#endif
 
 	public:
-		// NWTPI (string, unsigned int, unsigned int);	XXX waiting for gcc4.7 ( http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n1986.pdf )
 		OEGLWindow(string title, unsigned int w, unsigned int h, unsigned char windowAlphaLevel, OEGLCapabilities *);
 		~OEGLWindow();
 
-		string getWindowTitle();
-		unsigned int getWindowWidth();
-		unsigned int getWindowHeight();
+		int  			addSurface();							// default is a WindowSurface
+		// int 			addSurface(EOGL_SURFACE_TYPE_ENUM) 		// TODO WINDOW, PBUFFER, PIXMAP
 
-		EGLDisplay getCurrentDisplay();
-		EGLSurface getCurrentSurface();
-		//	EGLContext*		getCurrentContext();			TODO
-		void swapBuffers();
+		void			makeCurrentSurface(int surfaceId);
 
-		EGLint getEgConfigId();
+		string 			getWindowTitle();
+		unsigned int 	getWindowWidth();
+		unsigned int 	getWindowHeight();
+
+		EGLDisplay 		getCurrentDisplay();
+		EGLSurface 		getCurrentSurface();
+
+		//	EGLContext*		getCurrentContext();				// TODO
+
+		void 			swapBuffers();
+
+		EGLint getConfigId();
 
 	};
 }

@@ -21,6 +21,7 @@ namespace nwtpi {
 class NativeWindow {
 	public:
 		enum NATIVE_DEVICE_ENUM : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV, NATIVE_DEVICE_ENUM_COUNT };
+		enum NATIVE_ELEMENT_ENUM : unsigned int { SCREEN=0, IMAGE };
 
 	private:
 		// TODO will be better to put this on a class like NativeDevice / only one displayHandle by device
@@ -50,10 +51,13 @@ class NativeWindow {
 		NativeWindow(unsigned int w, unsigned int h, NATIVE_DEVICE_ENUM dev, unsigned char alpha);
 		~NativeWindow();
 
-		void createRegion();
-		void createRegion(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char alpha);
-	 	// marked out region + image resource TODO
-		//int 	createRegionWithImage(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData);
+		int addElement();
+		int addElement(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char alpha);
+
+		void 	makeCurrentElement(int elemId);
+		int 	getLastElementId();
+	 	// marked out region + image resource TODO createElementImage
+		//int 	addImageElement(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData);
 
 		// void drawImage();
 		// void drawScene();

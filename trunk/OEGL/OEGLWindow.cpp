@@ -8,70 +8,91 @@ namespace nwtpi {
 
 
 OEGLWindow::OEGLWindow (string title, unsigned int w, unsigned int h, unsigned char alpha, OEGLCapabilities * caps)
-	: NativeWindow(w, h, NATIVE_DEVICE_ENUM::LCD, alpha), windowTitle(title), capabilities(caps), surfaceId(-1)
+	: NativeWindow(w, h, NATIVE_DEVICE_ENUM::LCD, alpha), windowTitle(title), capabilities(caps), currentSurfaceId(-1)
 {
 
-	if ( ( egContext = createContext() ) == EGL_NO_CONTEXT )					// create eglDisplay,Context,Surface from dmWindow.element+w+h
+	if ( ( context = createContext() ) == EGL_NO_CONTEXT )					// create eglDisplay,Context,Surface from dmWindow.element+w+h
 		throw runtime_error("runtime error : OEGLWindow::OEGLWindow egCreateContext ** failed");
 
-	if ( eglMakeCurrent(egDisplay, egSurface, egSurface, egContext) == EGL_FALSE )
+	// NativeWindow already has a default element, so we just link our surface to it.
+	makeCurrentSurface(addSurface());
+
+	// TODO surface <= vector<OEGLSurface> surfaces[currentSurfaceId]->getHandle();
+	if ( eglMakeCurrent(display, surface, surface, context) == EGL_FALSE )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** eglMakeCurrent context failed.");
 
 	DEBUG ("OEGLWindow" , "egCreateContext and make current done." );
 }
 
 OEGLWindow::~OEGLWindow () {
-	eglMakeCurrent( egDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
-	eglDestroySurface( egDisplay, egSurface );
-	eglDestroyContext( egDisplay, egContext );
-	eglTerminate( egDisplay );
+	eglMakeCurrent( display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
+	eglDestroySurface( display, surface );
+	eglDestroyContext( display, context );
+	eglTerminate( display );
 
 }
 
 EGLContext OEGLWindow::createContext() {
-	EGLint 		egMajorVersion;
-	EGLint 		egMinorVersion;
-	EGLint 		egNumConfigs;
+	EGLint 		eglMajorVersion;
+	EGLint 		eglMinorVersion;
+	EGLint 		eglNumConfigs;
 
 #ifdef DEBUG_ON
-	EGLint		egRedSize;
-	EGLint		egAlphaSize;
-	EGLint		egBufferSize;
+	EGLint		eglRedSize;
+	EGLint		eglAlphaSize;
+	EGLint		eglBufferSize;
 #endif
 
-	//EGLNativeWindowType eglNativeWindow = &windowHandle;						// void * = &EGL_DISPMANX_WINDOW_T
-	//EGLNativeWindowType eglNativeWindow = elements[currentElementId]->getEglNativeWindowType();
-	EGLint * egAttribList = capabilities->getConfigAttributes();
+	EGLint * eglAttribList = capabilities->getConfigAttributes();
 
 	DEBUG ("OEGLWindow::egCreateContext","attribute[1] as RED_SIZE : " << egAttribList[1]);
 
-	if ( ( egDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY) ) == EGL_NO_DISPLAY )
+	if ( ( display = eglGetDisplay(EGL_DEFAULT_DISPLAY) ) == EGL_NO_DISPLAY )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_DISPLAY");
 
-	if ( ! eglInitialize(egDisplay, &egMajorVersion, &egMinorVersion) )
+	if ( ! eglInitialize(display, &eglMajorVersion, &eglMinorVersion) )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** eglInitialize failed.");
 
-	if ( eglChooseConfig(egDisplay, egAttribList, &egConfig, 1, &egNumConfigs) == EGL_FALSE )
+	if ( eglChooseConfig(display, eglAttribList, &config, 1, &eglNumConfigs) == EGL_FALSE )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** eglChooseConfig failed.");
 
-	egSurface = eglCreateWindowSurface(egDisplay, egConfig, elements[currentElementId]->getEglNativeWindowType(), NULL );
-	if ( egSurface == EGL_NO_SURFACE )
-		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_SURFACE");
-
-	surfaceId = currentElementId;	// we link surface<->NativeElement together
-
-	eglGetConfigAttrib(egDisplay,egConfig,EGL_CONFIG_ID,&egConfigId);	// getting our configId
+	eglGetConfigAttrib(display,config,EGL_CONFIG_ID,&configId);	// getting our configId
 
 #ifdef DEBUG_ON
-	eglGetConfigAttrib(egDisplay,egConfig,EGL_BUFFER_SIZE,&egBufferSize);
-	eglGetConfigAttrib(egDisplay,egConfig,EGL_ALPHA_SIZE,&egAlphaSize);
-	eglGetConfigAttrib(egDisplay,egConfig,EGL_RED_SIZE,&egRedSize);
+	eglGetConfigAttrib(display,config,EGL_BUFFER_SIZE,&eglBufferSize);
+	eglGetConfigAttrib(display,config,EGL_ALPHA_SIZE,&eglAlphaSize);
+	eglGetConfigAttrib(display,config,EGL_RED_SIZE,&eglRedSize);
 #endif
 
-	DEBUG ("NWTPI::egCreateContext","egConfig #" << egConfigId << ", BufferSz : " << egBufferSize << ", AlphaSz : " << egAlphaSize << ", RedSz : " << egRedSize );
+	DEBUG ("OEGLWindow::egCreateContext","egConfig #" << configId << ", BufferSz : " << eglBufferSize << ", AlphaSz : " << eglAlphaSize << ", RedSz : " << eglRedSize );
 
-	return ( eglCreateContext(egDisplay, egConfig, EGL_NO_CONTEXT, capabilities->getContextAttributes() ) );
+	return ( eglCreateContext(display, config, EGL_NO_CONTEXT, capabilities->getContextAttributes() ) );
 
+}
+
+/**
+ * 		\fn		int addSurface
+ * 		\brief	add a window surface from currentElementId
+ *
+ */
+int OEGLWindow::addSurface()
+{
+	surface = eglCreateWindowSurface(display, config, elements[currentElementId]->getEglNativeWindowType(), NULL );
+	if ( surface == EGL_NO_SURFACE )
+		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_SURFACE");
+
+	return ( getLastElementId() );
+}
+
+/**
+ * 		\fn		void makeCurrentSurface
+ * 		\brief	set currentSurfaceId from a surfaceId
+ * 		\param	int surfaceId
+ * 		\return	void
+ */
+void OEGLWindow::makeCurrentSurface(int surfaceId)
+{
+	currentSurfaceId = surfaceId;
 }
 
 string OEGLWindow::getWindowTitle() {
@@ -79,19 +100,19 @@ string OEGLWindow::getWindowTitle() {
 }
 
 void OEGLWindow::swapBuffers() {
-	eglSwapBuffers(egDisplay, egSurface);
+	eglSwapBuffers(display, surface);
 }
 
 EGLDisplay OEGLWindow::getCurrentDisplay() {
-	return egDisplay;
+	return display;
 }
 
 EGLSurface OEGLWindow::getCurrentSurface() {
-	return egSurface;
+	return surface;
 }
 
-EGLint 	OEGLWindow::getEgConfigId() {
-	return egConfigId;
+EGLint 	OEGLWindow::getConfigId() {
+	return configId;
 }
 #ifdef DEBUG_ON
 void OEGLWindow::logd(string method, ostream& message) {
