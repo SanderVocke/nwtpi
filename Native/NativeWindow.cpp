@@ -6,12 +6,13 @@ bool 		 NativeWindow::bcmInitState = false;
 bool 		 NativeWindow::deviceOpenState[] = { false, false, false, false };
 
 NativeWindow::NativeWindow (unsigned int width, unsigned int height, NATIVE_DEVICE_ENUM _device, unsigned char alpha)
-	: device(_device), windowWidth(width), windowHeight(height), windowAlpha(alpha), currentElementId(-1)
+	: device(_device), windowWidth(width), windowHeight(height), windowAlpha(alpha), currentElementId(-1), elementSyncLockId(-1)
 {
 
 	displayOpen(device);
 
 	makeCurrentElement(addElement());
+	syncElement(currentElementId);
 
 }
 
@@ -115,6 +116,18 @@ int NativeWindow::addElement(unsigned int x, unsigned int y, unsigned int w, uns
 void NativeWindow::makeCurrentElement(int elementId)
 {
 	currentElementId = elementId;
+}
+
+bool NativeWindow::syncElement(int elementToSync)
+{
+	if ( elementSyncLockId != -1 )
+		elements[elementSyncLockId]->setUpdateLockState(false);
+
+	elements[elementToSync]->updateSync();
+	elementSyncLockId = elementToSync;
+	elements[elementToSync]->setUpdateLockState(true);
+
+	return true; 	// TODO check updateSync() return value
 }
 
 int NativeWindow::getLastElementId()

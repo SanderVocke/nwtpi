@@ -37,8 +37,7 @@ protected:
 	EGL_DISPMANX_WINDOW_T		eglNativeWindowHandle;
 
 	DISPMANX_ELEMENT_HANDLE_T	updateStart( int priority );
-	int 						updateSync( DISPMANX_UPDATE_HANDLE_T update );
-	bool						updateLock;
+	bool						updateLockState;
 
 	void 						setRegion(unsigned int x, unsigned y, unsigned int w, unsigned int h);
 	void 						setAlpha(unsigned char _alpha);
@@ -55,6 +54,9 @@ public:
 
 	~NativeElement();
 
+	int							updateSync();
+	int							updateSync( DISPMANX_UPDATE_HANDLE_T update );
+	void						setUpdateLockState(bool lockState);
 	int 						getId();
 	VC_RECT_T					getRegion();
 	DISPMANX_ELEMENT_HANDLE_T	getHandle();
