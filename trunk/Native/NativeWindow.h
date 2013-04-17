@@ -38,6 +38,7 @@ class NativeWindow {
 		unsigned char				windowAlpha;
 		vector <NativeElement *>	elements;
 		int 						currentElementId;
+		int							elementSyncLockId;
 
 		void 						displayOpen(NATIVE_DEVICE_ENUM dev);
 		int							displayClose(DISPMANX_DISPLAY_HANDLE_T);
@@ -55,6 +56,7 @@ class NativeWindow {
 		int addElement(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char alpha);
 
 		void 	makeCurrentElement(int elemId);
+		bool	syncElement(int element);
 		int 	getLastElementId();
 	 	// marked out region + image resource TODO createElementImage
 		//int 	addImageElement(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData);

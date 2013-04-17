@@ -10,17 +10,17 @@ const unsigned int NativeElement::defaultPriority = 1;		// update priority
 int NativeElement::elementId = -1;							// 0 => no element
 
 NativeElement::NativeElement(DISPMANX_DISPLAY_HANDLE_T display, unsigned int x, unsigned y, unsigned int w, unsigned int h, unsigned char _alpha)
-	: displayHandle(display), priority(defaultPriority), updateLock(false)
+	: displayHandle(display), priority(defaultPriority), updateLockState(false)
 {
 	setRegion(x,y,w,h);
 	setAlpha(_alpha);
 
 	// void resource creation :
 	resource = new NativeResource(region);
-	updateHandle = updateStart(priority);
-	elementHandle = add(displayHandle, updateHandle, region, resource->getRegion(), alpha);
+	updateHandle = updateStart(priority);	// this seem to start a thread and return a new handle
+	elementHandle = add(displayHandle, updateHandle, region, resource->getRegion(), alpha);	// updateHandle => attach element to thread ?
 	elementId += 1;
-	updateSync(updateHandle);
+	//updateSync(updateHandle);
 
 	eglNativeWindowHandle.element = elementHandle;
 	eglNativeWindowHandle.width   = region.width;
@@ -31,13 +31,9 @@ DISPMANX_UPDATE_HANDLE_T NativeElement::updateStart(int prio)
 {
 	DISPMANX_UPDATE_HANDLE_T upd = (uint32_t) 0;
 
-	if ( ! updateLock ) {
-		upd = vc_dispmanx_update_start( (int32_t) prio);
-		if ( upd== DISPMANX_NO_HANDLE )
-			throw runtime_error("runtime error : NativeElement::updateStart ** does not return an handle.");
-
-		updateLock = true;
-	}
+	upd = vc_dispmanx_update_start( (int32_t) prio);
+	if ( upd== DISPMANX_NO_HANDLE )
+		throw runtime_error("runtime error : NativeElement::updateStart ** does not return an handle.");
 
 	return upd;
 
@@ -57,6 +53,11 @@ DISPMANX_ELEMENT_HANDLE_T NativeElement::add(DISPMANX_DISPLAY_HANDLE_T disp, DIS
 									&alpha, 					/* VC_DISPMANX_ALPHA_T alpha     */
 									0,							/* DISPMANX_CLAMP_T 		TODO */
 									DISPMANX_NO_ROTATE);		/* DISPMANX_TRANSFORM_T 	TODO */
+}
+
+int NativeElement::updateSync()
+{
+	return updateSync(updateHandle);
 }
 
 int NativeElement::updateSync(DISPMANX_UPDATE_HANDLE_T upd)
@@ -81,6 +82,11 @@ void NativeElement::setRegion(unsigned int x, unsigned y, unsigned int w, unsign
 	region.width  = (uint32_t) w;
 	region.height = (uint32_t) h;
 
+}
+
+void NativeElement::setUpdateLockState(bool lockState)
+{
+	updateLockState = lockState;
 }
 
 void NativeElement::setAlpha(unsigned char _alpha)
