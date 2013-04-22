@@ -1,3 +1,4 @@
+2013/04/22	R44			introducing OEGLSurface <=> NativeElement (windowSurface) 
 2013/04/15	R38			complete new design including classes rewriting : 
 						> NWTPI::NativeWindow + NativeElement + NativeResource
 						> NWTPI::OEGLWindow + OEGLCapabilities

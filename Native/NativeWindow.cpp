@@ -118,6 +118,11 @@ void NativeWindow::makeCurrentElement(int elementId)
 	currentElementId = elementId;
 }
 
+NativeElement * NativeWindow::getCurrentElement()
+{
+	return elements[currentElementId];
+}
+
 bool NativeWindow::syncElement(int elementToSync)
 {
 	if ( elementSyncLockId != -1 )
@@ -133,6 +138,22 @@ bool NativeWindow::syncElement(int elementToSync)
 int NativeWindow::getLastElementId()
 {
 	return elements.back()->getId();
+}
+
+NativeElement * NativeWindow::findElementById(int elemId)
+{
+	vector<int>::size_type vsize = elements.size();
+	unsigned int i;
+	NativeElement * result = NULL;					// TODO ... NWTPI_NATIVE_NO_ELEMENT
+
+	for (i=0 ; i<vsize; i++) {
+		if ( elements[i]->getId() == elemId ) {
+			result = elements[i];
+			break;
+		}
+	}
+
+	return ( result );
 }
 
 #ifdef DEBUG_ON

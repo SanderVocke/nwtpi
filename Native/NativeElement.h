@@ -22,9 +22,17 @@ using namespace std;
 
 namespace nwtpi {
 
+	enum NATIVE_ELEMENT_ENUM : unsigned int { SCREEN_ELEMENT=0, IMAGE_ELEMENT };
+
 class NativeElement {
+private:
+#ifdef DEBUG_ON
+	void logd(string , ostream& );
+#endif
+
 protected:
-	static int					elementId;
+	static int					elementsCounter;
+	int							elementId;
 
 	DISPMANX_ELEMENT_HANDLE_T	elementHandle;
 	DISPMANX_DISPLAY_HANDLE_T	displayHandle;
@@ -38,6 +46,8 @@ protected:
 
 	DISPMANX_ELEMENT_HANDLE_T	updateStart( int priority );
 	bool						updateLockState;
+
+	EGLSurface 					eglSurface;
 
 	void 						setRegion(unsigned int x, unsigned y, unsigned int w, unsigned int h);
 	void 						setAlpha(unsigned char _alpha);

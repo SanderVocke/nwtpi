@@ -18,10 +18,9 @@ using namespace std;
 
 namespace nwtpi {
 
+	enum NATIVE_DEVICE_ENUM : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV, NATIVE_DEVICE_ENUM_COUNT };
+
 class NativeWindow {
-	public:
-		enum NATIVE_DEVICE_ENUM : unsigned int { LCD=0, AUX_LCD, HDMI, SDTV, NATIVE_DEVICE_ENUM_COUNT };
-		enum NATIVE_ELEMENT_ENUM : unsigned int { SCREEN=0, IMAGE };
 
 	private:
 		// TODO will be better to put this on a class like NativeDevice / only one displayHandle by device
@@ -52,12 +51,16 @@ class NativeWindow {
 		NativeWindow(unsigned int w, unsigned int h, NATIVE_DEVICE_ENUM dev, unsigned char alpha);
 		~NativeWindow();
 
-		int addElement();
-		int addElement(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char alpha);
+		int 			addElement();
+		int 			addElement(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char alpha);
 
-		void 	makeCurrentElement(int elemId);
-		bool	syncElement(int element);
-		int 	getLastElementId();
+		void 			makeCurrentElement(int elemId);
+		bool			syncElement(int element);
+		int 			getLastElementId();
+		NativeElement * getCurrentElement();
+		int 			getCurrentElementId();
+		NativeElement * findElementById(int elemId);
+
 	 	// marked out region + image resource TODO createElementImage
 		//int 	addImageElement(unsigned int width, unsigned int height, bool opaqueness, VC_IMAGE_TYPE_T imageType, void * imageData);
 
