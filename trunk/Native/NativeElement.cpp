@@ -7,10 +7,10 @@ namespace nwtpi {
  */
 
 const unsigned int NativeElement::defaultPriority = 1;		// update priority
-int NativeElement::elementId = -1;							// 0 => no element
+int NativeElement::elementsCounter = -1;
 
 NativeElement::NativeElement(DISPMANX_DISPLAY_HANDLE_T display, unsigned int x, unsigned y, unsigned int w, unsigned int h, unsigned char _alpha)
-	: displayHandle(display), priority(defaultPriority), updateLockState(false)
+	: elementId(-1), displayHandle(display), priority(defaultPriority), updateLockState(false), eglSurface(EGL_NO_SURFACE)
 {
 	setRegion(x,y,w,h);
 	setAlpha(_alpha);
@@ -19,7 +19,8 @@ NativeElement::NativeElement(DISPMANX_DISPLAY_HANDLE_T display, unsigned int x, 
 	resource = new NativeResource(region);
 	updateHandle = updateStart(priority);	// this seem to start a thread and return a new handle
 	elementHandle = add(displayHandle, updateHandle, region, resource->getRegion(), alpha);	// updateHandle => attach element to thread ?
-	elementId += 1;
+	elementId = elementsCounter += 1;		// TODO - collection
+
 	//updateSync(updateHandle);
 
 	eglNativeWindowHandle.element = elementHandle;
@@ -113,5 +114,12 @@ VC_RECT_T NativeElement::getRegion()
 {
 	return region;
 }
+
+#ifdef DEBUG_ON
+void NativeElement::logd(string method, ostream& message) {
+	ostringstream& s = dynamic_cast<ostringstream&>(message);
+	cout << "==> " << method << " : " << s.str() << endl;
+}
+#endif
 
 }	// namespace nwtpi

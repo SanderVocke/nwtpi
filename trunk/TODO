@@ -1,6 +1,7 @@
 X NWTPI Class naming convention.
 X	R33, R38
-X	Classes directories as 'Java package' 
+X	Classes directories as 'Java package'
+>	constant, enum naming convention 
 
 * window resizing, dm elements as an array[] + add, delete, rotate methods.
 X 	NativeWindow			R33

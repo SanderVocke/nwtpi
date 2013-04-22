@@ -15,10 +15,24 @@ OEGLWindow::OEGLWindow (string title, unsigned int w, unsigned int h, unsigned c
 		throw runtime_error("runtime error : OEGLWindow::OEGLWindow egCreateContext ** failed");
 
 	// NativeWindow already has a default element, so we just link our surface to it.
-	makeCurrentSurface(addSurface());
+	makeCurrentSurface(addWindowSurface(currentElementId));
 
-	// TODO surface <= vector<OEGLSurface> surfaces[currentSurfaceId]->getHandle();
-	if ( eglMakeCurrent(display, surface, surface, context) == EGL_FALSE )
+	// 1st method
+//	DEBUG ("OEGLWindow",
+//			"currentElementId : " << currentElementId <<
+//			", currentSurfaceId : " << currentSurfaceId <<
+//			", surfaceHandle : " << hex << surface << dec );
+//
+//	if ( eglMakeCurrent(display, surface, surface, context) == EGL_FALSE )
+//		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** eglMakeCurrent context failed.");
+
+//	 2cd method
+	DEBUG ("OEGLWindow",
+				"currentElementId : " << currentElementId <<
+				", currentSurfaceId : " << currentSurfaceId <<
+				", surfaceHandle : " << hex << surfaces[currentSurfaceId]->getHandle() << dec );
+
+	if ( eglMakeCurrent(display, surfaces[currentSurfaceId]->getHandle(), surfaces[currentSurfaceId]->getHandle(), context) == EGL_FALSE )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** eglMakeCurrent context failed.");
 
 	DEBUG ("OEGLWindow" , "egCreateContext and make current done." );
@@ -26,7 +40,8 @@ OEGLWindow::OEGLWindow (string title, unsigned int w, unsigned int h, unsigned c
 
 OEGLWindow::~OEGLWindow () {
 	eglMakeCurrent( display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT );
-	eglDestroySurface( display, surface );
+	//eglDestroySurface( display, surface );
+	eglDestroySurface( display, surfaces[currentSurfaceId]->getHandle() );	// TODO bulk delete surfaces[*]
 	eglDestroyContext( display, context );
 	eglTerminate( display );
 
@@ -45,7 +60,7 @@ EGLContext OEGLWindow::createContext() {
 
 	EGLint * eglAttribList = capabilities->getConfigAttributes();
 
-	DEBUG ("OEGLWindow::egCreateContext","attribute[1] as RED_SIZE : " << egAttribList[1]);
+	DEBUG ("OEGLWindow::egCreateContext","attribute[1] as RED_SIZE : " << eglAttribList[1]);
 
 	if ( ( display = eglGetDisplay(EGL_DEFAULT_DISPLAY) ) == EGL_NO_DISPLAY )
 		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_DISPLAY");
@@ -71,17 +86,29 @@ EGLContext OEGLWindow::createContext() {
 }
 
 /**
- * 		\fn		int addSurface
- * 		\brief	add a window surface from currentElementId
- *
+ * 		\fn		int addWindowSurface
+ * 		\brief	add a window surface from element 'elementId'
+ * 		\param	elementId : element id to linked
+ *		\return	surfaceId
  */
-int OEGLWindow::addSurface()
+int OEGLWindow::addWindowSurface(int elemId)
 {
-	surface = eglCreateWindowSurface(display, config, elements[currentElementId]->getEglNativeWindowType(), NULL );
-	if ( surface == EGL_NO_SURFACE )
-		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_SURFACE");
+	// 1st method
+//	surface = eglCreateWindowSurface(display, config, elements[elemId]->getEglNativeWindowType(), NULL );
+//	if ( surface == EGL_NO_SURFACE )
+//		throw runtime_error("runtime error : OEGLWindow::egCreateContext ** EGL_NO_SURFACE");
+//
+//	return ( elemId );
 
-	return ( getLastElementId() );
+	// 2cd method
+	OEGLSurface * surf = new OEGLSurface(OEGL_WINDOW_SURFACE, this, elements[elemId]);
+
+	if ( surf->getHandle() == EGL_NO_SURFACE )
+		throw runtime_error("runtime error : OEGLWindow::addWindowSurface ** EGL_NO_SURFACE");
+
+	surfaces.push_back(surf);
+
+	return ( surf->getId() );
 }
 
 /**
@@ -90,9 +117,9 @@ int OEGLWindow::addSurface()
  * 		\param	int surfaceId
  * 		\return	void
  */
-void OEGLWindow::makeCurrentSurface(int surfaceId)
+void OEGLWindow::makeCurrentSurface(int id)
 {
-	currentSurfaceId = surfaceId;
+	currentSurfaceId = id;
 }
 
 string OEGLWindow::getWindowTitle() {
@@ -100,20 +127,36 @@ string OEGLWindow::getWindowTitle() {
 }
 
 void OEGLWindow::swapBuffers() {
-	eglSwapBuffers(display, surface);
+	// 1st method
+	//eglSwapBuffers(display, surface);
+
+	// 2cd method
+	eglSwapBuffers(display, surfaces[currentSurfaceId]->getHandle() );
 }
 
-EGLDisplay OEGLWindow::getCurrentDisplay() {
+EGLDisplay OEGLWindow::getDisplay() {
 	return display;
 }
 
-EGLSurface OEGLWindow::getCurrentSurface() {
-	return surface;
+EGLSurface OEGLWindow::getCurrentSurfaceHandle() {
+	//return surface;
+	return ( surfaces[currentSurfaceId]->getHandle() );
+}
+
+int OEGLWindow::getCurrentSurfaceId()
+{
+	return currentSurfaceId;
+}
+
+EGLConfig OEGLWindow::getConfig()
+{
+	return config;
 }
 
 EGLint 	OEGLWindow::getConfigId() {
 	return configId;
 }
+
 #ifdef DEBUG_ON
 void OEGLWindow::logd(string method, ostream& message) {
 	ostringstream& s = dynamic_cast<ostringstream&>(message);
